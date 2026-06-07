@@ -1,8 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { useState, useEffect } from 'react';
 
 interface GlitchTextProps {
@@ -34,7 +29,7 @@ export default function GlitchText({
     const startTimeout = setTimeout(() => {
       let iterations = 0;
       const chars = '01#$@&%<>_[]{}-=+*!?X█▒░';
-      
+
       const interval = setInterval(() => {
         setDisplayedText((prev) => {
           return text
@@ -63,7 +58,6 @@ export default function GlitchText({
     return () => clearTimeout(startTimeout);
   }, [text, scramble, speed, delay]);
 
-  // Periodic random heavy glitch effect
   useEffect(() => {
     const glitchTimer = setInterval(() => {
       setIsGlitching(true);
@@ -80,7 +74,6 @@ export default function GlitchText({
         isGlitching ? 'scale-y-[1.05] skew-x-3' : ''
       }`}
     >
-      {/* Cyan split */}
       <span
         className={`absolute top-0 left-[2px] text-neon-cyan opacity-80 mix-blend-screen select-none pointer-events-none ${
           isGlitching ? 'animate-glitch block' : 'hidden'
@@ -90,10 +83,8 @@ export default function GlitchText({
         {displayedText}
       </span>
 
-      {/* Main text */}
       <span className="relative z-10">{displayedText}</span>
 
-      {/* Magenta split */}
       <span
         className={`absolute top-0 -left-[2px] text-neon-magenta opacity-80 mix-blend-screen select-none pointer-events-none ${
           isGlitching ? 'animate-glitch block' : 'hidden'

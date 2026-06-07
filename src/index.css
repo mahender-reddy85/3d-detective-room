@@ -5,7 +5,7 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
-  
+
   --color-neon-cyan: #00f0ff;
   --color-neon-magenta: #ff007f;
   --color-terminal-green: #33ff33;
@@ -14,7 +14,6 @@
   --color-cyber-glass: rgba(10, 10, 26, 0.7);
 }
 
-/* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -30,7 +29,6 @@
   background: var(--color-neon-cyan);
 }
 
-/* Scanline and CRT Glitch FX */
 .scanlines {
   position: relative;
   overflow: hidden;
@@ -48,24 +46,12 @@
 }
 
 @keyframes glitch-anim {
-  0% {
-    clip-path: inset(40% 0 61% 0);
-  }
-  20% {
-    clip-path: inset(92% 0 1% 0);
-  }
-  40% {
-    clip-path: inset(14% 0 80% 0);
-  }
-  60% {
-    clip-path: inset(80% 0 5% 0);
-  }
-  80% {
-    clip-path: inset(3% 0 92% 0);
-  }
-  100% {
-    clip-path: inset(40% 0 61% 0);
-  }
+  0% { clip-path: inset(40% 0 61% 0); }
+  20% { clip-path: inset(92% 0 1% 0); }
+  40% { clip-path: inset(14% 0 80% 0); }
+  60% { clip-path: inset(80% 0 5% 0); }
+  80% { clip-path: inset(3% 0 92% 0); }
+  100% { clip-path: inset(40% 0 61% 0); }
 }
 
 @keyframes noise-anim {
@@ -120,25 +106,21 @@
 }
 
 @keyframes lcd-pulse {
-  0%, 100% {
-    opacity: 0.85;
-  }
+  0%, 100% { opacity: 0.85; }
   50% {
     opacity: 0.65;
     background-color: rgba(0, 240, 255, 0.15);
   }
 }
 
-/* Floating particles styling */
 @keyframes float-dust {
   0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
   50% { transform: translateY(-15px) translateX(10px) rotate(180deg); }
   100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
 }
 
-/* Custom terminal background styling */
 .terminal-grid {
-  background-image: 
+  background-image:
     linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
   background-size: 20px 20px;

@@ -1,49 +1,14 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { SceneSection } from '../types';
 import Workroom from './Workroom';
 
 interface ThreeSceneProps {
-  currentSection: SceneSection;
-  onSelectSection: (section: SceneSection) => void;
   isNight: boolean;
+  onToggleNight: () => void;
 }
 
-// Camera coordinates mapping for each focused workspace node
-const CAMERA_TARGETS: Record<
-  SceneSection,
-  { position: [number, number, number]; lookAt: [number, number, number] }
-> = {
-  ROOM: {
-    position: [0, 1.2, 5.0],
-    lookAt: [0, 0.2, -1.5],
-  },
-  ABOUT: {
-    position: [-0.6, 0.88, -1.2], // close-up view of double monitors
-    lookAt: [-0.8, 0.7, -3.2],
-  },
-  PROJECTS: {
-    position: [0.65, 0.42, -1.0], // close-up view of open glowing laptop
-    lookAt: [0.8, 0.18, -3.0],
-  },
-  SKILLS: {
-    position: [2.5, 0.5, -1.5], // close-up targeting voxel books on bookshelf
-    lookAt: [4.2, 0.3, -3.4],
-  },
-  CONTACT: {
-    position: [-2.4, 0.8, -0.2], // focus looking at circuits poster
-    lookAt: [-5.9, 0.8, -1.8],
-  },
-};
-
-// Key state listener hook for WASD & Arrow Keys
 function useKeyboard() {
   const keys = useRef({
     w: false,
@@ -86,7 +51,6 @@ function useKeyboard() {
   return keys;
 }
 
-// WASD Navigation Engine for First-Person Room Exploration
 function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
   const { camera } = useThree();
   const keys = useKeyboard();
@@ -98,16 +62,13 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
 
     if (!hasInput || !controlsRef.current) return;
 
-    // Fluid frame-rate independent exploration speed
     const speed = 4.5 * delta;
 
-    // Look vector mapped on XZ plane
     const forward = new THREE.Vector3();
     camera.getWorldDirection(forward);
     forward.y = 0;
     forward.normalize();
 
-    // Side vector
     const right = new THREE.Vector3();
     right.crossVectors(forward, camera.up).normalize();
 
@@ -117,11 +78,9 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
     if (activeKeys.a || activeKeys.ArrowLeft) moveVector.addScaledVector(right, speed);
     if (activeKeys.d || activeKeys.ArrowRight) moveVector.addScaledVector(right, -speed);
 
-    // Update orbit targets & positions
     const tgt = controlsRef.current.target;
     const nextTgt = tgt.clone().add(moveVector);
 
-    // Confine viewer to room bounds (X: -5.5 to 5.5, Z: -4.5 to 4.5)
     nextTgt.x = THREE.MathUtils.clamp(nextTgt.x, -5.5, 5.5);
     nextTgt.z = THREE.MathUtils.clamp(nextTgt.z, -4.5, 4.5);
     nextTgt.y = THREE.MathUtils.clamp(nextTgt.y, -0.5, 2.0);
@@ -136,7 +95,6 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
   return null;
 }
 
-// Holographic interactive 3D cursor wrapping meshes in real-time
 function Cursor3D() {
   const cursorRef = useRef<THREE.Group>(null);
   const outerRef = useRef<THREE.Mesh>(null);
@@ -155,7 +113,6 @@ function Cursor3D() {
     for (let i = 0; i < hits.length; i++) {
       const hit = hits[i];
 
-      // Exclude components belonging to the cursor
       let isCursorMesh = false;
       let checkObj: THREE.Object3D | null = hit.object;
       while (checkObj) {
@@ -168,7 +125,6 @@ function Cursor3D() {
 
       if (isCursorMesh) continue;
 
-      // Valid surface hit
       hitPt.copy(hit.point);
       if (hit.face) {
         hitNorm.copy(hit.face.normal);
@@ -176,18 +132,15 @@ function Cursor3D() {
       }
       foundHit = true;
 
-      // Check if hovered element is workspace interactive
       let testObj: THREE.Object3D | null = hit.object;
       while (testObj) {
         const name = testObj.name || '';
         if (
-          name.includes('laptop-interactive-mesh') ||
-          name.includes('monitors-assembly') ||
-          name.includes('poster-interactive-mesh') ||
-          name.includes('bookshelf-assembly') ||
           name.includes('coffee-mug-interactive') ||
           name.includes('desk-lamp-interactive') ||
-          name.includes('cyberspace-cockpit-chair')
+          name.includes('cyberspace-cockpit-chair') ||
+          name.includes('water-can-interactive') ||
+          name.includes('rgb-accessories')
         ) {
           interactive = true;
           break;
@@ -203,15 +156,12 @@ function Cursor3D() {
 
     if (cursorRef.current) {
       if (foundHit) {
-        // Position slightly offset over surface
         const targetPos = hitPt.clone().addScaledVector(hitNorm, 0.035);
         cursorRef.current.position.lerp(targetPos, 0.35);
 
-        // Orient perpendicular to face normal
         const lookTarget = cursorRef.current.position.clone().add(hitNorm);
         cursorRef.current.lookAt(lookTarget);
 
-        // Adjust spatial scale on hover
         const scaleVal = interactive ? 1.3 : 0.85;
         cursorRef.current.scale.lerp(new THREE.Vector3(scaleVal, scaleVal, scaleVal), 0.25);
       } else {
@@ -232,33 +182,30 @@ function Cursor3D() {
 
   return (
     <group ref={cursorRef} scale={[0, 0, 0]} userData={{ isCursor: true }}>
-      {/* Outer spinning ring segment */}
       <mesh ref={outerRef} userData={{ isCursor: true }}>
         <ringGeometry args={[0.07, 0.09, 16]} />
-        <meshBasicMaterial 
-          color={cursorColor} 
-          transparent 
-          opacity={0.8} 
-          side={THREE.DoubleSide} 
+        <meshBasicMaterial
+          color={cursorColor}
+          transparent
+          opacity={0.8}
+          side={THREE.DoubleSide}
           depthWrite={false}
           depthTest={false}
         />
       </mesh>
 
-      {/* Inner tick target */}
       <mesh ref={innerRef} userData={{ isCursor: true }}>
         <ringGeometry args={[0, 0.015, 4]} />
-        <meshBasicMaterial 
-          color={cursorColor} 
-          transparent 
-          opacity={0.9} 
-          side={THREE.DoubleSide} 
+        <meshBasicMaterial
+          color={cursorColor}
+          transparent
+          opacity={0.9}
+          side={THREE.DoubleSide}
           depthWrite={false}
           depthTest={false}
         />
       </mesh>
 
-      {/* Crosshair horizontal & vertical alignments */}
       <group userData={{ isCursor: true }}>
         <mesh userData={{ isCursor: true }}>
           <boxGeometry args={[0.045, 0.005, 0.001]} />
@@ -273,52 +220,7 @@ function Cursor3D() {
   );
 }
 
-// Internal Camera Rig to handle vector interpolation smoothly and release keys control safely
-interface CameraRigProps {
-  currentSection: SceneSection;
-  isTransitioningToRoom: boolean;
-  setIsTransitioningToRoom: (trans: boolean) => void;
-}
-
-function CameraRig({ currentSection, isTransitioningToRoom, setIsTransitioningToRoom }: CameraRigProps) {
-  const { camera } = useThree();
-  const currentLookAt = useRef<THREE.Vector3>(new THREE.Vector3(0, 0.2, -1.5));
-  const targetLookAt = useRef<THREE.Vector3>(new THREE.Vector3(0, 0.2, -1.5));
-  const targetPos = useRef<THREE.Vector3>(new THREE.Vector3(0, 1.2, 5.0));
-
-  // Update target coordinates whenever section shifts
-  useEffect(() => {
-    const target = CAMERA_TARGETS[currentSection] || CAMERA_TARGETS.ROOM;
-    targetPos.current.set(...target.position);
-    targetLookAt.current.set(...target.lookAt);
-
-    if (currentSection === 'ROOM') {
-      setIsTransitioningToRoom(true);
-    } else {
-      setIsTransitioningToRoom(false);
-    }
-  }, [currentSection, setIsTransitioningToRoom]);
-
-  useFrame(() => {
-    // interpolation runs only if we are in viewport details or animating back to ROOM base coords
-    if (currentSection !== 'ROOM' || isTransitioningToRoom) {
-      camera.position.lerp(targetPos.current, 0.075);
-      currentLookAt.current.lerp(targetLookAt.current, 0.075);
-      camera.lookAt(currentLookAt.current);
-
-      if (currentSection === 'ROOM' && isTransitioningToRoom) {
-        if (camera.position.distanceTo(targetPos.current) < 0.05) {
-          setIsTransitioningToRoom(false);
-        }
-      }
-    }
-  });
-
-  return null;
-}
-
-export default function ThreeScene({ currentSection, onSelectSection, isNight }: ThreeSceneProps) {
-  const [isTransitioningToRoom, setIsTransitioningToRoom] = useState(false);
+export default function ThreeScene({ isNight, onToggleNight }: ThreeSceneProps) {
   const [isDraggingChair, setIsDraggingChair] = useState(false);
   const controlsRef = useRef<any>(null);
 
@@ -328,20 +230,15 @@ export default function ThreeScene({ currentSection, onSelectSection, isNight }:
         shadows
         camera={{ position: [0, 1.2, 5.0], fov: 60, near: 0.1, far: 50 }}
         gl={{ antialias: true }}
-        style={{ backgroundColor: '#dc7676' }}
       >
-        {/* Cinematic Cyberpunk Lighting Rig */}
-        {/* Deep background ambient neon backlighting */}
         <ambientLight intensity={isNight ? 0.2 : 0.85} color={isNight ? '#0b0b28' : '#e2e8f0'} />
 
-        {/* Global hemispheric twilight sky filter */}
         <hemisphereLight
           intensity={isNight ? 0.3 : 0.85}
           color="#00f0ff"
           groundColor="#ff007f"
         />
 
-        {/* Focused workspace overhead spotlight */}
         <spotLight
           position={[0, 4.0, -2.0]}
           angle={Math.PI / 3}
@@ -352,7 +249,6 @@ export default function ThreeScene({ currentSection, onSelectSection, isNight }:
           shadow-mapSize={[1024, 1024]}
         />
 
-        {/* Laptop/Desktop ambient bouncing light */}
         <pointLight
           position={[0, -0.2, -1.5]}
           intensity={isNight ? 1.4 : 2.5}
@@ -360,43 +256,35 @@ export default function ThreeScene({ currentSection, onSelectSection, isNight }:
           color="#ff007f"
         />
 
-        {/* The procedural modeled 3D cozy workspace cockpit */}
         <Workroom
-          currentSection={currentSection}
-          onSelectSection={onSelectSection}
           isNight={isNight}
           onChairDragChange={setIsDraggingChair}
         />
 
-        {/* Dynamic Custom Hologram Cursor */}
         <Cursor3D />
 
-        {/* Vector Linear Lerping Camera Rig */}
-        <CameraRig 
-          currentSection={currentSection} 
-          isTransitioningToRoom={isTransitioningToRoom}
-          setIsTransitioningToRoom={setIsTransitioningToRoom}
+        <WASDControls controlsRef={controlsRef} />
+
+        <OrbitControls
+          ref={controlsRef}
+          enableZoom={true}
+          minDistance={2.5}
+          maxDistance={7.5}
+          minPolarAngle={0.3}
+          maxPolarAngle={Math.PI / 2 + 0.05}
+          target={[0, 0, -1.5]}
+          enabled={!isDraggingChair}
         />
-
-        {/* WASD controls for room tracking */}
-        {currentSection === 'ROOM' && !isTransitioningToRoom && (
-          <WASDControls controlsRef={controlsRef} />
-        )}
-
-        {/* Allow users to orbit and explore the room via dragging ONLY while in general explorer mode */}
-        {currentSection === 'ROOM' && (
-          <OrbitControls
-            ref={controlsRef}
-            enableZoom={true}
-            minDistance={2.5}
-            maxDistance={7.5}
-            minPolarAngle={0.3}
-            maxPolarAngle={Math.PI / 2 + 0.05}
-            target={[0, 0, -1.5]}
-            enabled={!isDraggingChair}
-          />
-        )}
       </Canvas>
+
+      <button
+        id="night-toggle-btn"
+        onClick={onToggleNight}
+        className="absolute top-4 right-4 z-20 w-12 h-12 bg-[#050510]/95 border border-[#00f0ff]/40 hover:border-[#00f0ff] text-[#00f0ff] hover:text-white flex items-center justify-center cursor-pointer backdrop-blur-md transition-all duration-300 shadow-[0_0_15px_rgba(0,240,255,0.15)]"
+        title={isNight ? 'Switch to Day' : 'Switch to Night'}
+      >
+        <span className="text-lg">{isNight ? '☀' : '🌙'}</span>
+      </button>
     </div>
   );
 }
