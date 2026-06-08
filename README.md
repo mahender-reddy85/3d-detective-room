@@ -1,19 +1,28 @@
-# 3D Developer Workroom
+# 3D Detective's Office
 
-An interactive 3D retro-futurist developer room built using React, Three.js, React Three Fiber, and TailwindCSS.
+![3D Detective's Office Screenshot](./public/image.png)
+
+An interactive 3D detective office (or hacker's den) built using React, Three.js, React Three Fiber, and TailwindCSS. The scene features deep industrial concrete textures, glowing neon accents, and interactive procedural meshes.
 
 ## Features
 
-- **Procedural 3D Environment**: High-fidelity developer room with standard lighting, shadows, and meshes.
+- **Procedural 3D Environment**: High-fidelity room with industrial concrete grey walls, realistic shadows, and ambient point/spot lighting.
+- **3D Aesthetic**:
+  - Spinning cyan wireframe hologram projector on the desk.
+  - Animated panning security camera mounted in the corner.
+  - Crime investigation board with polaroids, neon push-pins, and connecting red strings.
+  - Scattered neon energy drinks (cyan and crushed magenta).
+  - A messy, lived-in bookshelf with glowing books.
+  - A custom synthwave hover-chair.
 - **Interactive Objects**: 
-  - Lamp toggle (illuminating the desk)
+  - Lamp intensity toggle (illuminating the desk)
   - Coffee mug spin
   - Swivel chair drag/rotation
   - Watering can interaction
   - RGB mechanical keyboard lighting toggle
-- **Day/Night Toggle**: Real-time ambient, point, and spot lighting adjustment.
-- **Dynamic Backgrounds**: Custom scrollable canvas cityscape (Skyline) and retro CRT scanline overlays.
-- **Web Audio FX**: Real-time sound effects and ambient noise generated dynamically via the Web Audio API.
+- **Day/Night Toggle**: Real-time ambient and directional lighting adjustment.
+- **Dynamic Backgrounds**: Custom scrollable cityscape canvas and retro CRT scanline overlays.
+- **Web Audio FX**: Real-time sound effects and ambient lo-fi music generated dynamically via the Web Audio API.
 
 ## Getting Started
 
