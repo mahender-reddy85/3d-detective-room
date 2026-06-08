@@ -1,4 +1,4 @@
-# 3D Detective's Office
+# 3D Detective Room
 
 ![3D Detective's Office Screenshot](./public/image.png)
 

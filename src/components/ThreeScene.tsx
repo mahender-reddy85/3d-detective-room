@@ -229,7 +229,6 @@ export default function ThreeScene({ isNight }: ThreeSceneProps) {
           intensity={isNight ? 2.2 : 4.5}
           color="#00f0ff"
           castShadow
-          shadow-mapSize={[1024, 1024]}
         />
 
         <pointLight

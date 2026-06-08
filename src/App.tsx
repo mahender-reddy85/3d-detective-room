@@ -1,4 +1,3 @@
-import NoiseBackground from './components/NoiseBackground';
 import ThreeScene from './components/ThreeScene';
 import AudioPlayer from './components/AudioPlayer';
 
@@ -13,7 +12,6 @@ export default function App() {
       } select-none`}
     >
       <div id="simulation-viewport-stack" className="relative w-full h-full">
-        <NoiseBackground />
 
         <div id="canvas-wrapper-layer" className="absolute inset-0 z-0">
           <ThreeScene
