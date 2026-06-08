@@ -1,6 +1,0 @@
-{
-  "name": "Glitch Workspace 3D Portfolio",
-  "description": "An interactive 3D retro-futurist developer room portfolio using React, Three.js, React Three Fiber, and glitch art overlays.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

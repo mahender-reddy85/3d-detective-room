@@ -1,17 +1,9 @@
-import { useState } from 'react';
 import NoiseBackground from './components/NoiseBackground';
 import ThreeScene from './components/ThreeScene';
 import AudioPlayer from './components/AudioPlayer';
 
 export default function App() {
-  const [isNight, setIsNight] = useState(false);
-
-  const handleToggleNight = () => {
-    setIsNight((prev) => !prev);
-    if (window.playGlitchBeep) {
-      window.playGlitchBeep('static');
-    }
-  };
+  const isNight = false;
 
   return (
     <div
@@ -26,7 +18,6 @@ export default function App() {
         <div id="canvas-wrapper-layer" className="absolute inset-0 z-0">
           <ThreeScene
             isNight={isNight}
-            onToggleNight={handleToggleNight}
           />
         </div>
 

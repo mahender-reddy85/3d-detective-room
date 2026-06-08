@@ -1,20 +1,38 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 3D Developer Workroom
 
-# Run and deploy your AI Studio app
+An interactive 3D retro-futurist developer room built using React, Three.js, React Three Fiber, and TailwindCSS.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/3976e3e8-f7f3-4f4d-999d-1b834d8741cd
+- **Procedural 3D Environment**: High-fidelity developer room with standard lighting, shadows, and meshes.
+- **Interactive Objects**: 
+  - Lamp toggle (illuminating the desk)
+  - Coffee mug spin
+  - Swivel chair drag/rotation
+  - Watering can interaction
+  - RGB mechanical keyboard lighting toggle
+- **Day/Night Toggle**: Real-time ambient, point, and spot lighting adjustment.
+- **Dynamic Backgrounds**: Custom scrollable canvas cityscape (Skyline) and retro CRT scanline overlays.
+- **Web Audio FX**: Real-time sound effects and ambient noise generated dynamically via the Web Audio API.
 
-## Run Locally
+## Getting Started
 
-**Prerequisites:**  Node.js
+### Prerequisites
+- Node.js (v18 or higher recommended)
 
+### Run Locally
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Build for production:
+   ```bash
+   npm run build
+   ```

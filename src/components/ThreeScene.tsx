@@ -6,7 +6,6 @@ import Workroom from './Workroom';
 
 interface ThreeSceneProps {
   isNight: boolean;
-  onToggleNight: () => void;
 }
 
 function useKeyboard() {
@@ -98,7 +97,6 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
 function Cursor3D() {
   const cursorRef = useRef<THREE.Group>(null);
   const outerRef = useRef<THREE.Mesh>(null);
-  const innerRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
@@ -173,9 +171,6 @@ function Cursor3D() {
     if (outerRef.current) {
       outerRef.current.rotation.z = t * (interactive ? 4.5 : 1.2);
     }
-    if (innerRef.current) {
-      innerRef.current.rotation.z = -t * (interactive ? 6.0 : 2.0);
-    }
   });
 
   const cursorColor = hovered ? '#ff007f' : '#00f0ff';
@@ -188,18 +183,6 @@ function Cursor3D() {
           color={cursorColor}
           transparent
           opacity={0.8}
-          side={THREE.DoubleSide}
-          depthWrite={false}
-          depthTest={false}
-        />
-      </mesh>
-
-      <mesh ref={innerRef} userData={{ isCursor: true }}>
-        <ringGeometry args={[0, 0.015, 4]} />
-        <meshBasicMaterial
-          color={cursorColor}
-          transparent
-          opacity={0.9}
           side={THREE.DoubleSide}
           depthWrite={false}
           depthTest={false}
@@ -220,15 +203,15 @@ function Cursor3D() {
   );
 }
 
-export default function ThreeScene({ isNight, onToggleNight }: ThreeSceneProps) {
+export default function ThreeScene({ isNight }: ThreeSceneProps) {
   const [isDraggingChair, setIsDraggingChair] = useState(false);
   const controlsRef = useRef<any>(null);
 
   return (
     <div id="webgl-canvas-viewport" className={`w-full h-full relative transition-colors duration-500 cursor-none ${isNight ? 'bg-[#04040a]' : 'bg-[#cbd5e1]'}`}>
       <Canvas
-        shadows
-        camera={{ position: [0, 1.2, 5.0], fov: 60, near: 0.1, far: 50 }}
+        shadows={{ type: THREE.PCFShadowMap }}
+        camera={{ position: [0, 1.8, 7.0], fov: 60, near: 0.1, far: 50 }}
         gl={{ antialias: true }}
       >
         <ambientLight intensity={isNight ? 0.2 : 0.85} color={isNight ? '#0b0b28' : '#e2e8f0'} />
@@ -276,15 +259,6 @@ export default function ThreeScene({ isNight, onToggleNight }: ThreeSceneProps) 
           enabled={!isDraggingChair}
         />
       </Canvas>
-
-      <button
-        id="night-toggle-btn"
-        onClick={onToggleNight}
-        className="absolute top-4 right-4 z-20 w-12 h-12 bg-[#050510]/95 border border-[#00f0ff]/40 hover:border-[#00f0ff] text-[#00f0ff] hover:text-white flex items-center justify-center cursor-pointer backdrop-blur-md transition-all duration-300 shadow-[0_0_15px_rgba(0,240,255,0.15)]"
-        title={isNight ? 'Switch to Day' : 'Switch to Night'}
-      >
-        <span className="text-lg">{isNight ? '☀' : '🌙'}</span>
-      </button>
     </div>
   );
 }

@@ -14,6 +14,14 @@
   --color-cyber-glass: rgba(10, 10, 26, 0.7);
 }
 
+html, body, #root {
+  background-color: var(--color-cyber-dark);
+  color: white;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -45,15 +53,6 @@
   pointer-events: none;
 }
 
-@keyframes glitch-anim {
-  0% { clip-path: inset(40% 0 61% 0); }
-  20% { clip-path: inset(92% 0 1% 0); }
-  40% { clip-path: inset(14% 0 80% 0); }
-  60% { clip-path: inset(80% 0 5% 0); }
-  80% { clip-path: inset(3% 0 92% 0); }
-  100% { clip-path: inset(40% 0 61% 0); }
-}
-
 @keyframes noise-anim {
   0% { transform: translate(0,0) }
   10% { transform: translate(-1%,-1%) }
@@ -64,22 +63,6 @@
   80% { transform: translate(-2%,-2%) }
   95% { transform: translate(1%,3%) }
   100% { transform: translate(0,0) }
-}
-
-.animate-glitch {
-  animation: glitch-anim 2s infinite linear alternate-reverse;
-}
-
-.cyan-magenta-glow {
-  text-shadow: -2px 0 0 #00f0ff, 2px 0 0 #ff007f;
-}
-
-.neon-border-cyan {
-  box-shadow: 0 0 10px #00f0ff, inset 0 0 5px #00f0ff;
-}
-
-.neon-border-magenta {
-  box-shadow: 0 0 10px #ff007f, inset 0 0 5px #ff007f;
 }
 
 .flicker-slow {
@@ -98,18 +81,6 @@
   20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
     opacity: 0.4;
     filter: hue-rotate(90deg);
-  }
-}
-
-.lcd-glitch-active {
-  animation: lcd-pulse 3s infinite steps(2);
-}
-
-@keyframes lcd-pulse {
-  0%, 100% { opacity: 0.85; }
-  50% {
-    opacity: 0.65;
-    background-color: rgba(0, 240, 255, 0.15);
   }
 }
 
