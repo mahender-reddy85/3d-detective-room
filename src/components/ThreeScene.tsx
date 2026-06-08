@@ -210,7 +210,6 @@ export default function ThreeScene({ isNight }: ThreeSceneProps) {
   return (
     <div id="webgl-canvas-viewport" className={`w-full h-full relative transition-colors duration-500 cursor-none ${isNight ? 'bg-[#04040a]' : 'bg-[#cbd5e1]'}`}>
       <Canvas
-        shadows={{ type: THREE.PCFShadowMap }}
         camera={{ position: [0, 1.8, 7.0], fov: 60, near: 0.1, far: 50 }}
         gl={{ antialias: true }}
       >
@@ -228,7 +227,6 @@ export default function ThreeScene({ isNight }: ThreeSceneProps) {
           penumbra={0.8}
           intensity={isNight ? 2.2 : 4.5}
           color="#00f0ff"
-          castShadow
         />
 
         <pointLight

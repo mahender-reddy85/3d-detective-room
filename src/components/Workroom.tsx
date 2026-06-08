@@ -122,7 +122,7 @@ export default function Workroom({
   const handlePointerOver = (nodeId: string) => {
     setHoveredNode(nodeId);
     document.body.style.cursor = 'pointer';
-    if (window.playGlitchBeep) window.playGlitchBeep('beep');
+
   };
 
   const handlePointerOut = () => {
@@ -133,14 +133,14 @@ export default function Workroom({
   const handleMugClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     setMugTargetRot((prev) => prev + Math.PI * 2);
-    if (window.playGlitchBeep) window.playGlitchBeep('laser');
+
   };
 
   const handleLampClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     setLampIntensityState((prev) => {
       const next = prev === 'bright' ? 'off' : prev === 'off' ? 'dim' : 'bright';
-      if (window.playGlitchBeep) window.playGlitchBeep(next === 'off' ? 'static' : 'beep');
+
       return next;
     });
   };
@@ -150,14 +150,14 @@ export default function Workroom({
     if (isWatering) return;
     setIsWatering(true);
     setWateringStatusText('INJECTING...');
-    if (window.playGlitchBeep) window.playGlitchBeep('laser');
+
     setTimeout(() => {
       setWateringStatusText('WASHING CACHE...');
-      if (window.playGlitchBeep) window.playGlitchBeep('beep');
+
     }, 1200);
     setTimeout(() => {
       setWateringStatusText('RAM BOOS-TED!!');
-      if (window.playGlitchBeep) window.playGlitchBeep('chord');
+
     }, 2400);
     setTimeout(() => {
       setIsWatering(false);
@@ -744,7 +744,7 @@ export default function Workroom({
           onPointerOut={handlePointerOut}
           onClick={(e) => {
             e.stopPropagation();
-            if (window.playGlitchBeep) window.playGlitchBeep('beep');
+
           }}
         >
           
@@ -929,7 +929,7 @@ export default function Workroom({
               if (e.target && (e.target as any).releasePointerCapture) {
                 (e.target as any).releasePointerCapture(e.pointerId);
               }
-              if (window.playGlitchBeep) window.playGlitchBeep('beep');
+
               onChairDragChange?.(false);
             }
           }}

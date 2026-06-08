@@ -1,5 +1,4 @@
 import ThreeScene from './components/ThreeScene';
-import AudioPlayer from './components/AudioPlayer';
 
 export default function App() {
   const isNight = false;
@@ -18,8 +17,6 @@ export default function App() {
             isNight={isNight}
           />
         </div>
-
-        <AudioPlayer />
       </div>
     </div>
   );
