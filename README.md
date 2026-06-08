@@ -20,8 +20,6 @@ An interactive 3D detective office (or hacker's den) built using React, Three.js
   - Swivel chair drag/rotation
   - Watering can interaction
   - RGB mechanical keyboard lighting toggle
-- **Day/Night Toggle**: Real-time ambient and directional lighting adjustment.
-- **Dynamic Backgrounds**: Custom scrollable cityscape canvas and retro CRT scanline overlays.
 - **Web Audio FX**: Real-time sound effects and ambient lo-fi music generated dynamically via the Web Audio API.
 
 ## Getting Started
