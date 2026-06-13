@@ -14,7 +14,6 @@ function PortraitWithFrame() {
         <meshBasicMaterial map={texture} />
       </mesh>
       
-      <pointLight position={[0, -0.9, 0.8]} color="#ffe5a0" intensity={1.2} distance={3.5} />
     </group>
   );
 }
@@ -164,8 +163,6 @@ export default function Workroom({
       setWateringStatusText('STANDBY');
     }, 3800);
   };
-
-  const ledIntensity = 1.0 + Math.sin(Date.now() / 300) * 0.2;
 
   return (
     <group name="workroom-assembly">
@@ -419,13 +416,6 @@ export default function Workroom({
         <meshStandardMaterial color={isNight ? '#1a1c22' : '#9ca3af'} roughness={0.9} metalness={0.15} />
       </mesh>
 
-      <group position={[5.9, 2.5, 0]} rotation={[0, -Math.PI / 2, 0]} name="wall-neon-strip-right">
-        <mesh>
-          <boxGeometry args={[8, 0.05, 0.05]} />
-          <meshBasicMaterial color="#ff007f" />
-        </mesh>
-        <pointLight color="#ff007f" intensity={1.5} distance={5} />
-      </group>
 
       <group position={[0, 4.3, 0]} name="ceiling-fan-group">
         <mesh castShadow position={[0, 0.3, 0]}>

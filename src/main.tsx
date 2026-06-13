@@ -15,12 +15,6 @@ console.info = (...args) => {
   originalInfo(...args);
 };
 
-const originalLog = console.log;
-console.log = (...args) => {
-  if (args[0] && typeof args[0] === 'string' && args[0].includes('Download the React DevTools')) return;
-  originalLog(...args);
-};
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

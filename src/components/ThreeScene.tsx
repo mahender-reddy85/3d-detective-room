@@ -14,10 +14,10 @@ function useKeyboard() {
     a: false,
     s: false,
     d: false,
-    ArrowUp: false,
-    ArrowDown: false,
-    ArrowLeft: false,
-    ArrowRight: false,
+    arrowup: false,
+    arrowdown: false,
+    arrowleft: false,
+    arrowright: false,
   });
 
   useEffect(() => {
@@ -25,8 +25,8 @@ function useKeyboard() {
       const k = e.key.toLowerCase();
       if (['w', 'a', 's', 'd'].includes(k)) {
         keys.current[k as 'w' | 'a' | 's' | 'd'] = true;
-      } else if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key)) {
-        keys.current[e.key as 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight'] = true;
+      } else if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) {
+        keys.current[k as 'arrowup' | 'arrowdown' | 'arrowleft' | 'arrowright'] = true;
       }
     };
 
@@ -34,8 +34,8 @@ function useKeyboard() {
       const k = e.key.toLowerCase();
       if (['w', 'a', 's', 'd'].includes(k)) {
         keys.current[k as 'w' | 'a' | 's' | 'd'] = false;
-      } else if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key)) {
-        keys.current[e.key as 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight'] = false;
+      } else if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) {
+        keys.current[k as 'arrowup' | 'arrowdown' | 'arrowleft' | 'arrowright'] = false;
       }
     };
 
@@ -57,7 +57,7 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
   useFrame((state, delta) => {
     const activeKeys = keys.current;
     const hasInput = activeKeys.w || activeKeys.a || activeKeys.s || activeKeys.d ||
-                     activeKeys.ArrowUp || activeKeys.ArrowDown || activeKeys.ArrowLeft || activeKeys.ArrowRight;
+                     activeKeys.arrowup || activeKeys.arrowdown || activeKeys.arrowleft || activeKeys.arrowright;
 
     if (!hasInput || !controlsRef.current) return;
 
@@ -72,10 +72,10 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
     right.crossVectors(forward, camera.up).normalize();
 
     const moveVector = new THREE.Vector3();
-    if (activeKeys.w || activeKeys.ArrowUp) moveVector.addScaledVector(forward, speed);
-    if (activeKeys.s || activeKeys.ArrowDown) moveVector.addScaledVector(forward, -speed);
-    if (activeKeys.a || activeKeys.ArrowLeft) moveVector.addScaledVector(right, speed);
-    if (activeKeys.d || activeKeys.ArrowRight) moveVector.addScaledVector(right, -speed);
+    if (activeKeys.w || activeKeys.arrowup) moveVector.addScaledVector(forward, speed);
+    if (activeKeys.s || activeKeys.arrowdown) moveVector.addScaledVector(forward, -speed);
+    if (activeKeys.a || activeKeys.arrowleft) moveVector.addScaledVector(right, speed);
+    if (activeKeys.d || activeKeys.arrowright) moveVector.addScaledVector(right, -speed);
 
     const tgt = controlsRef.current.target;
     const nextTgt = tgt.clone().add(moveVector);
@@ -136,9 +136,7 @@ function Cursor3D() {
         if (
           name.includes('coffee-mug-interactive') ||
           name.includes('desk-lamp-interactive') ||
-          name.includes('cyberspace-cockpit-chair') ||
-          name.includes('water-can-interactive') ||
-          name.includes('rgb-accessories')
+          name.includes('cyberspace-cockpit-chair')
         ) {
           interactive = true;
           break;
