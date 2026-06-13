@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
-import { Html, Line, useTexture } from '@react-three/drei';
+import { Line, useTexture } from '@react-three/drei';
 
 import * as THREE from 'three';
 
@@ -36,12 +36,10 @@ export default function Workroom({
   const hologramRef = useRef<THREE.Mesh>(null);
   const cameraSwivelRef = useRef<THREE.Group>(null);
 
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   const [lampIntensityState, setLampIntensityState] = useState<'off' | 'dim' | 'bright'>('bright');
   const [mugTargetRot, setMugTargetRot] = useState(0);
   const [isWatering, setIsWatering] = useState(false);
-  const [wateringStatusText, setWateringStatusText] = useState('STANDBY');
 
   const [chairRot, setChairRot] = useState(-0.05);
   const isDraggingChair = useRef(false);
@@ -73,21 +71,21 @@ export default function Workroom({
     }
 
     if (lampRef.current) {
-      const targetRotY = hoveredNode === 'lamp' ? -0.4 : -0.6;
-      const targetRotZ = hoveredNode === 'lamp' ? 0.08 : 0;
+      const targetRotY = -0.6;
+      const targetRotZ = 0;
       lampRef.current.rotation.y = THREE.MathUtils.lerp(lampRef.current.rotation.y, targetRotY, 8 * delta);
       lampRef.current.rotation.z = THREE.MathUtils.lerp(lampRef.current.rotation.z, targetRotZ, 8 * delta);
     }
 
     if (keyboardRef.current) {
-      const targetY = hoveredNode === 'keyboard' ? 0.12 : 0.08;
-      const targetScale = hoveredNode === 'keyboard' ? 1.05 : 1.0;
+      const targetY = 0.08;
+      const targetScale = 1.0;
       keyboardRef.current.position.y = THREE.MathUtils.lerp(keyboardRef.current.position.y, targetY, 8 * delta);
       keyboardRef.current.scale.setScalar(THREE.MathUtils.lerp(keyboardRef.current.scale.x, targetScale, 10 * delta));
     }
 
     if (waterCanRef.current) {
-      const targetTiltZ = isWatering ? -0.85 : 0;
+      const targetTiltZ = isWatering ? 0.85 : 0;
       const targetTiltX = isWatering ? 0.35 : 0;
       const targetY = isWatering ? 0.22 : 0.08;
       waterCanRef.current.rotation.z = THREE.MathUtils.lerp(waterCanRef.current.rotation.z, targetTiltZ, 8 * delta);
@@ -118,13 +116,11 @@ export default function Workroom({
     }
   });
 
-  const handlePointerOver = (nodeId: string) => {
-    setHoveredNode(nodeId);
+  const handlePointerOver = () => {
     document.body.style.cursor = 'pointer';
   };
 
   const handlePointerOut = () => {
-    setHoveredNode(null);
     document.body.style.cursor = 'auto';
   };
 
@@ -144,12 +140,8 @@ export default function Workroom({
     e.stopPropagation();
     if (isWatering) return;
     setIsWatering(true);
-    setWateringStatusText('INJECTING...');
-    setTimeout(() => setWateringStatusText('WASHING CACHE...'), 1200);
-    setTimeout(() => setWateringStatusText('RAM BOOS-TED!!'), 2400);
     setTimeout(() => {
       setIsWatering(false);
-      setWateringStatusText('STANDBY');
     }, 3800);
   };
 
@@ -503,22 +495,22 @@ export default function Workroom({
           position={[-1.2, 0.08, 0.4]}
           name="coffee-mug-interactive"
           onClick={handleMugClick}
-          onPointerOver={() => handlePointerOver('mug')}
+          onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
         >
           <mesh castShadow position={[0, 0.11, 0]}>
             <cylinderGeometry args={[0.07, 0.07, 0.22, 16]} />
             <meshStandardMaterial
-              color={hoveredNode === 'mug' ? '#00f0ff' : '#030312'}
+              color="#030312"
               roughness={0.1}
               metalness={0.8}
-              emissive={hoveredNode === 'mug' ? '#00f0ff' : '#000000'}
+              emissive="#000000"
               emissiveIntensity={0.25}
             />
           </mesh>
           <mesh castShadow position={[-0.08, 0.11, 0]} rotation={[0, 0, Math.PI / 2]}>
             <torusGeometry args={[0.06, 0.018, 8, 16, Math.PI]} />
-            <meshStandardMaterial color={hoveredNode === 'mug' ? '#00f0ff' : '#030312'} roughness={0.1} />
+            <meshStandardMaterial color="#030312" roughness={0.1} />
           </mesh>
           <mesh position={[0, 0.21, 0]}>
             <cylinderGeometry args={[0.062, 0.062, 0.01, 12]} />
@@ -532,12 +524,12 @@ export default function Workroom({
           rotation={[0, -0.6, 0]}
           name="desk-lamp-interactive"
           onClick={handleLampClick}
-          onPointerOver={() => handlePointerOver('lamp')}
+          onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
         >
           <mesh castShadow position={[0, 0.02, 0]}>
             <cylinderGeometry args={[0.18, 0.2, 0.04, 16]} />
-            <meshStandardMaterial color={hoveredNode === 'lamp' ? '#ff007f' : '#0a0c16'} roughness={0.2} metalness={0.9} />
+            <meshStandardMaterial color="#0a0c16" roughness={0.2} metalness={0.9} />
           </mesh>
           <mesh castShadow position={[0, 0.05, 0]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.04, 0.04, 0.08, 12]} />
@@ -545,15 +537,15 @@ export default function Workroom({
           </mesh>
           <mesh castShadow position={[0.06, 0.24, -0.06]} rotation={[0.25, 0, -0.15]}>
             <cylinderGeometry args={[0.016, 0.016, 0.42, 8]} />
-            <meshStandardMaterial color={hoveredNode === 'lamp' ? '#ff007f' : '#1a1c32'} roughness={0.4} metalness={0.8} />
+            <meshStandardMaterial color="#1a1c32" roughness={0.4} metalness={0.8} />
           </mesh>
           <mesh castShadow position={[0.12, 0.44, -0.12]}>
             <sphereGeometry args={[0.04, 12, 12]} />
-            <meshStandardMaterial color={hoveredNode === 'lamp' ? '#ff007f' : '#00f0ff'} metalness={0.95} />
+            <meshStandardMaterial color="#00f0ff" metalness={0.95} />
           </mesh>
           <mesh castShadow position={[0.02, 0.575, 0.01]} rotation={[-0.45, 0, 0.1]}>
             <cylinderGeometry args={[0.012, 0.012, 0.40, 8]} />
-            <meshStandardMaterial color={hoveredNode === 'lamp' ? '#ff007f' : '#1a1c32'} roughness={0.4} metalness={0.8} />
+            <meshStandardMaterial color="#1a1c32" roughness={0.4} metalness={0.8} />
           </mesh>
           <mesh castShadow position={[-0.08, 0.71, 0.14]}>
             <sphereGeometry args={[0.03, 10, 10]} />
@@ -719,14 +711,14 @@ export default function Workroom({
           rotation={[0, Math.PI + 0.2, 0]} 
           name="keyboard-mouse"
           ref={keyboardRef}
-          onPointerOver={() => handlePointerOver('keyboard')}
+          onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
         >
           
           <group position={[-0.1, 0, 0]}>
             <mesh castShadow position={[0, 0.01, 0]} rotation={[0.05, 0, 0]}>
               <boxGeometry args={[0.82, 0.025, 0.26]} />
-              <meshStandardMaterial color={hoveredNode === 'keyboard' ? '#0f0f2d' : '#111218'} roughness={0.7} />
+              <meshStandardMaterial color="#111218" roughness={0.7} />
             </mesh>
             
             <mesh position={[-0.12, 0.025, 0]} rotation={[0.05, 0, 0]}>
@@ -735,7 +727,7 @@ export default function Workroom({
             </mesh>
             <mesh position={[-0.12, 0.025, 0]} rotation={[0.05, 0, 0]}>
               <boxGeometry args={[0.55, 0.01, 0.23]} />
-              <meshStandardMaterial color={hoveredNode === 'keyboard' ? '#ff007f' : '#00f0ff'} emissive={hoveredNode === 'keyboard' ? '#ff007f' : '#00f0ff'} emissiveIntensity={0.5} />
+              <meshStandardMaterial color="#00f0ff" emissive="#00f0ff" emissiveIntensity={0.5} />
             </mesh>
             
             <mesh position={[0.26, 0.025, 0]} rotation={[0.05, 0, 0]}>
@@ -744,7 +736,7 @@ export default function Workroom({
             </mesh>
             <mesh position={[0.26, 0.025, 0]} rotation={[0.05, 0, 0]}>
               <boxGeometry args={[0.17, 0.01, 0.23]} />
-              <meshStandardMaterial color={hoveredNode === 'keyboard' ? '#ff007f' : '#00f0ff'} emissive={hoveredNode === 'keyboard' ? '#ff007f' : '#00f0ff'} emissiveIntensity={0.5} />
+              <meshStandardMaterial color="#00f0ff" emissive="#00f0ff" emissiveIntensity={0.5} />
             </mesh>
           </group>
           
@@ -752,11 +744,11 @@ export default function Workroom({
           <group position={[0.6, 0.025, 0]}>
             <mesh castShadow rotation={[Math.PI / 2, 0, 0]}>
               <capsuleGeometry args={[0.045, 0.06, 8, 16]} />
-              <meshStandardMaterial color={hoveredNode === 'keyboard' ? '#151525' : '#080812'} roughness={0.3} />
+              <meshStandardMaterial color="#080812" roughness={0.3} />
             </mesh>
             <mesh position={[0, 0.043, -0.04]} rotation={[0, 0, Math.PI / 2]}>
               <cylinderGeometry args={[0.012, 0.012, 0.018, 16]} />
-              <meshStandardMaterial color={hoveredNode === 'keyboard' ? '#ffffff' : '#00f0ff'} roughness={0.2} metalness={0.8} />
+              <meshStandardMaterial color="#00f0ff" roughness={0.2} metalness={0.8} />
             </mesh>
           </group>
         </group>
@@ -803,18 +795,6 @@ export default function Workroom({
             <cylinderGeometry args={[0.015, 0.02, 0.2, 8]} />
             <meshStandardMaterial color="#ff007f" roughness={0.2} metalness={0.8} />
           </mesh>
-          {isWatering && (
-            <Html position={[0, 0.5, 0]} center className="pointer-events-none">
-              <div className="bg-[#050510]/90 border border-[#00f0ff] p-2 rounded relative">
-                <div className="absolute inset-0 bg-[#00f0ff]/10 animate-pulse pointer-events-none rounded" />
-                <span className="font-mono text-[8px] tracking-wider text-white flex flex-col items-center leading-tight">
-                  <span>[H2O COOLANT CAN]</span>
-                  <span className="text-[#00f0ff] font-bold mt-0.5">STATUS: {wateringStatusText}</span>
-                  <span className="text-[#ff007f] animate-pulse">OPTIMIZING OVERLOAD</span>
-                </span>
-              </div>
-            </Html>
-          )}
           <group ref={waterDropsRef} name="water-drops-system">
             <mesh><boxGeometry args={[0.01, 0.01, 0.01]} /><meshBasicMaterial color="#00f0ff" /></mesh>
             <mesh><boxGeometry args={[0.01, 0.01, 0.01]} /><meshBasicMaterial color="#ff007f" /></mesh>
@@ -908,7 +888,7 @@ export default function Workroom({
               onChairDragChange?.(false);
             }
           }}
-          onPointerOver={() => handlePointerOver('chair')}
+          onPointerOver={handlePointerOver}
           onPointerOut={() => {
             handlePointerOut();
             if (isDraggingChair.current) {

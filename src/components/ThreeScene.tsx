@@ -54,7 +54,7 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
   const { camera } = useThree();
   const keys = useKeyboard();
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     const activeKeys = keys.current;
     const hasInput = activeKeys.w || activeKeys.a || activeKeys.s || activeKeys.d ||
                      activeKeys.arrowup || activeKeys.arrowdown || activeKeys.arrowleft || activeKeys.arrowright;
