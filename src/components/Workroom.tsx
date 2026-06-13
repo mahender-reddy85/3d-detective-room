@@ -149,7 +149,7 @@ export default function Workroom({
     <group name="workroom-assembly">
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.5, 0]} receiveShadow name="room-floor">
         <planeGeometry args={[12, 10]} />
-        <meshStandardMaterial color={isNight ? '#14161a' : '#cbd5e1'} roughness={0.85} metalness={0.1} />
+        <meshStandardMaterial color={isNight ? '#101115' : '#e2e8f0'} roughness={0.85} metalness={0.1} />
       </mesh>
 
       <group position={[4.5, -2.48, 1.8]} rotation={[-Math.PI / 2, 0, 0.6]} name="magnifying-glass">
@@ -186,7 +186,7 @@ export default function Workroom({
 
       <mesh position={[0, 1, -5]} receiveShadow name="room-backwall">
         <boxGeometry args={[12, 7, 0.1]} />
-        <meshStandardMaterial color={isNight ? '#1a1c22' : '#9ca3af'} roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color={isNight ? '#141517' : '#f3f4f6'} roughness={0.9} metalness={0.15} />
       </mesh>
 
       <group position={[-5.8, 4.2, -4.8]} name="security-camera">
@@ -389,12 +389,12 @@ export default function Workroom({
 
       <mesh position={[6, 1, 0]} rotation={[0, -Math.PI / 2, 0]} name="room-right-wall">
         <planeGeometry args={[10, 7]} />
-        <meshStandardMaterial color={isNight ? '#1a1c22' : '#9ca3af'} roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color={isNight ? '#141517' : '#f3f4f6'} roughness={0.9} metalness={0.15} />
       </mesh>
 
       <mesh position={[-6, 1, 0]} rotation={[0, Math.PI / 2, 0]} name="room-left-wall">
         <planeGeometry args={[10, 7]} />
-        <meshStandardMaterial color={isNight ? '#1a1c22' : '#9ca3af'} roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color={isNight ? '#141517' : '#f3f4f6'} roughness={0.9} metalness={0.15} />
       </mesh>
 
 
