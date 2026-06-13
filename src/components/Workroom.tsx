@@ -87,7 +87,7 @@ export default function Workroom({
     }
 
     if (waterCanRef.current) {
-      const targetTiltZ = isWatering ? -0.85 : (hoveredNode === 'water_can' ? -0.15 : 0);
+      const targetTiltZ = isWatering ? -0.85 : 0;
       const targetTiltX = isWatering ? 0.35 : 0;
       const targetY = isWatering ? 0.22 : 0.08;
       waterCanRef.current.rotation.z = THREE.MathUtils.lerp(waterCanRef.current.rotation.z, targetTiltZ, 8 * delta);
@@ -121,7 +121,6 @@ export default function Workroom({
   const handlePointerOver = (nodeId: string) => {
     setHoveredNode(nodeId);
     document.body.style.cursor = 'pointer';
-
   };
 
   const handlePointerOut = () => {
@@ -132,16 +131,13 @@ export default function Workroom({
   const handleMugClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     setMugTargetRot((prev) => prev + Math.PI * 2);
-
   };
 
   const handleLampClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
-    setLampIntensityState((prev) => {
-      const next = prev === 'bright' ? 'off' : prev === 'off' ? 'dim' : 'bright';
-
-      return next;
-    });
+    setLampIntensityState((prev) =>
+      prev === 'bright' ? 'off' : prev === 'off' ? 'dim' : 'bright'
+    );
   };
 
   const handleWaterCanClick = (e: ThreeEvent<MouseEvent>) => {
@@ -149,15 +145,8 @@ export default function Workroom({
     if (isWatering) return;
     setIsWatering(true);
     setWateringStatusText('INJECTING...');
-
-    setTimeout(() => {
-      setWateringStatusText('WASHING CACHE...');
-
-    }, 1200);
-    setTimeout(() => {
-      setWateringStatusText('RAM BOOS-TED!!');
-
-    }, 2400);
+    setTimeout(() => setWateringStatusText('WASHING CACHE...'), 1200);
+    setTimeout(() => setWateringStatusText('RAM BOOS-TED!!'), 2400);
     setTimeout(() => {
       setIsWatering(false);
       setWateringStatusText('STANDBY');
@@ -732,10 +721,6 @@ export default function Workroom({
           ref={keyboardRef}
           onPointerOver={() => handlePointerOver('keyboard')}
           onPointerOut={handlePointerOut}
-          onClick={(e) => {
-            e.stopPropagation();
-
-          }}
         >
           
           <group position={[-0.1, 0, 0]}>
@@ -825,7 +810,7 @@ export default function Workroom({
                 <span className="font-mono text-[8px] tracking-wider text-white flex flex-col items-center leading-tight">
                   <span>[H2O COOLANT CAN]</span>
                   <span className="text-[#00f0ff] font-bold mt-0.5">STATUS: {wateringStatusText}</span>
-                  {isWatering && <span className="text-[#ff007f] animate-pulse">OPTIMIZING OVERLOAD</span>}
+                  <span className="text-[#ff007f] animate-pulse">OPTIMIZING OVERLOAD</span>
                 </span>
               </div>
             </Html>
