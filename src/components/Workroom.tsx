@@ -5,7 +5,7 @@ import { Html, Line, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
 function PortraitWithFrame() {
-  const texture = useTexture('/ambedkar.png');
+  const texture = useTexture('/ambedkar.webp');
   return (
     <group>
       
