@@ -132,7 +132,6 @@ function Cursor3D() {
       while (testObj) {
         const name = testObj.name || '';
         if (
-          name.includes('coffee-mug-interactive') ||
           name.includes('desk-lamp-interactive') ||
           name.includes('cyberspace-cockpit-chair')
         ) {

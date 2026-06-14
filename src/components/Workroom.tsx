@@ -105,7 +105,6 @@ export default function Workroom({
   onChairDragChange,
 }: WorkroomProps) {
   const fanRef = useRef<THREE.Group>(null);
-  const mugRef = useRef<THREE.Group>(null);
   const lampRef = useRef<THREE.Group>(null);
   const keyboardRef = useRef<THREE.Group>(null);
   const waterCanRef = useRef<THREE.Group>(null);
@@ -114,7 +113,6 @@ export default function Workroom({
   const cameraSwivelRef = useRef<THREE.Group>(null);
 
   const [lampIntensityState, setLampIntensityState] = useState<'off' | 'dim' | 'bright'>('bright');
-  const [mugTargetRot, setMugTargetRot] = useState(0);
   const [isWatering, setIsWatering] = useState(false);
 
   const [chairRot, setChairRot] = useState(-0.05);
@@ -127,10 +125,6 @@ export default function Workroom({
 
     if (fanRef.current) {
       fanRef.current.rotation.y = t * 1.8;
-    }
-
-    if (mugRef.current) {
-      mugRef.current.rotation.y = THREE.MathUtils.lerp(mugRef.current.rotation.y, mugTargetRot, 5 * delta);
     }
 
     if (hologramRef.current) {
@@ -186,11 +180,6 @@ export default function Workroom({
 
   const handlePointerOver = () => { document.body.style.cursor = 'pointer'; };
   const handlePointerOut = () => { document.body.style.cursor = 'auto'; };
-
-  const handleMugClick = (e: ThreeEvent<MouseEvent>) => {
-    e.stopPropagation();
-    setMugTargetRot((prev) => prev + Math.PI * 2);
-  };
 
   const handleLampClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
@@ -460,12 +449,8 @@ export default function Workroom({
         </group>
 
         <group
-          ref={mugRef}
           position={[-1.2, 0.08, 0.4]}
-          name="coffee-mug-interactive"
-          onClick={handleMugClick}
-          onPointerOver={handlePointerOver}
-          onPointerOut={handlePointerOut}
+          name="coffee-mug"
         >
           <mesh castShadow position={[0, 0.11, 0]}>
             <cylinderGeometry args={[0.07, 0.07, 0.22, 16]} />
