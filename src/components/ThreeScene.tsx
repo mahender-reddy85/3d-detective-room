@@ -97,7 +97,8 @@ function WASDControls({ controlsRef }: { controlsRef: React.RefObject<any> }) {
 function Cursor3D() {
   const cursorRef = useRef<THREE.Group>(null);
   const outerRef = useRef<THREE.Mesh>(null);
-  const [hovered, setHovered] = useState(false);
+  const hoveredRef = useRef(false);
+  const cursorColorRef = useRef('#00f0ff');
 
   useFrame((state) => {
     const { raycaster, scene } = state;
@@ -146,8 +147,20 @@ function Cursor3D() {
       break;
     }
 
-    if (hovered !== interactive) {
-      setHovered(interactive);
+    if (hoveredRef.current !== interactive) {
+      hoveredRef.current = interactive;
+      cursorColorRef.current = interactive ? '#ff007f' : '#00f0ff';
+
+      if (cursorRef.current) {
+        cursorRef.current.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mat = (child as THREE.Mesh).material as THREE.MeshBasicMaterial;
+            if (mat.isMeshBasicMaterial) {
+              mat.color.set(cursorColorRef.current);
+            }
+          }
+        });
+      }
     }
 
     if (cursorRef.current) {
@@ -171,14 +184,12 @@ function Cursor3D() {
     }
   });
 
-  const cursorColor = hovered ? '#ff007f' : '#00f0ff';
-
   return (
     <group ref={cursorRef} scale={[0, 0, 0]} userData={{ isCursor: true }}>
       <mesh ref={outerRef} userData={{ isCursor: true }}>
         <ringGeometry args={[0.07, 0.09, 16]} />
         <meshBasicMaterial
-          color={cursorColor}
+          color="#00f0ff"
           transparent
           opacity={0.8}
           side={THREE.DoubleSide}
@@ -190,11 +201,11 @@ function Cursor3D() {
       <group userData={{ isCursor: true }}>
         <mesh userData={{ isCursor: true }}>
           <boxGeometry args={[0.045, 0.005, 0.001]} />
-          <meshBasicMaterial color={cursorColor} depthWrite={false} depthTest={false} />
+          <meshBasicMaterial color="#00f0ff" depthWrite={false} depthTest={false} />
         </mesh>
         <mesh rotation={[0, 0, Math.PI / 2]} userData={{ isCursor: true }}>
           <boxGeometry args={[0.045, 0.005, 0.001]} />
-          <meshBasicMaterial color={cursorColor} depthWrite={false} depthTest={false} />
+          <meshBasicMaterial color="#00f0ff" depthWrite={false} depthTest={false} />
         </mesh>
       </group>
     </group>
@@ -206,7 +217,11 @@ export default function ThreeScene({ isNight }: ThreeSceneProps) {
   const controlsRef = useRef<any>(null);
 
   return (
-    <div id="webgl-canvas-viewport" className={`w-full h-full relative transition-colors duration-500 cursor-none ${isNight ? 'bg-[#04040a]' : 'bg-[#cbd5e1]'}`}>
+    <div
+      id="webgl-canvas-viewport"
+      className="w-full h-full relative transition-colors cursor-none"
+      style={{ backgroundColor: isNight ? '#04040a' : '#cbd5e1' }}
+    >
       <Canvas
         camera={{ position: [0, 1.8, 7.0], fov: 60, near: 0.1, far: 50 }}
         gl={{ antialias: true }}

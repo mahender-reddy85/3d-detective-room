@@ -1,8 +1,6 @@
 # 3D Detective Room
 
-![3D Detective's Office Screenshot](./public/image.png)
-
-An interactive 3D detective office (or hacker's den) built using React, Three.js, React Three Fiber, and TailwindCSS. The scene features deep industrial concrete textures, glowing neon accents, and interactive procedural meshes.
+An interactive 3D detective office (or hacker's den) built using React, Three.js, and React Three Fiber. The scene features deep industrial concrete textures, glowing neon accents, and interactive procedural meshes.
 
 ## Features
 

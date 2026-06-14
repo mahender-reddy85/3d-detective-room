@@ -1,34 +1,58 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-@import "tailwindcss";
 
-@theme {
+:root {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-
   --color-neon-cyan: #00f0ff;
   --color-neon-magenta: #ff007f;
   --color-cyber-dark: #05050c;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html, body, #root {
   background-color: var(--color-cyber-dark);
   color: white;
-  margin: 0;
-  padding: 0;
+  font-family: var(--font-sans);
   width: 100%;
   height: 100%;
 }
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--color-cyber-dark);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-neon-magenta);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-neon-cyan);
+}
+
+.relative { position: relative; }
+.absolute { position: absolute; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.w-screen { width: 100vw; }
+.h-screen { height: 100vh; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.overflow-hidden { overflow: hidden; }
+.select-none { user-select: none; }
+.cursor-none { cursor: none; }
+.z-0 { z-index: 0; }
+.transition-colors {
+  transition-property: color, background-color;
+  transition-duration: 500ms;
+  transition-timing-function: ease;
 }

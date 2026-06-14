@@ -1,19 +1,98 @@
 import { useRef, useState } from 'react';
 import { useFrame, ThreeEvent } from '@react-three/fiber';
 import { Line, useTexture } from '@react-three/drei';
-
 import * as THREE from 'three';
 
 function PortraitWithFrame() {
   const texture = useTexture('/ambedkar.webp');
   return (
     <group>
-      
       <mesh position={[0, 0, 0.01]}>
         <planeGeometry args={[1.58, 1.55]} />
         <meshBasicMaterial map={texture} />
       </mesh>
-      
+    </group>
+  );
+}
+
+function PushPin({ position, rotation, color }: {
+  position: [number, number, number];
+  rotation?: [number, number, number];
+  color: string;
+}) {
+  return (
+    <mesh position={position} rotation={rotation ?? [Math.PI / 2, 0, 0]} castShadow>
+      <cylinderGeometry args={[0.012, 0.012, 0.04, 8]} />
+      <meshStandardMaterial color={color} metalness={0.6} roughness={0.2} />
+    </mesh>
+  );
+}
+
+function ChairBase() {
+  return (
+    <>
+      <mesh castShadow position={[0, -0.8, 0]}>
+        <cylinderGeometry args={[0.6, 0.62, 0.06, 12]} />
+        <meshStandardMaterial color="#0d0d1e" roughness={0.6} />
+      </mesh>
+      <mesh castShadow position={[0, -0.62, 0]}>
+        <cylinderGeometry args={[0.1, 0.1, 0.36, 8]} />
+        <meshStandardMaterial color="#050510" roughness={0.4} />
+      </mesh>
+      <mesh castShadow position={[0, -0.44, 0]}>
+        <cylinderGeometry args={[0.14, 0.14, 0.08, 12]} />
+        <meshStandardMaterial color="#2d2d38" metalness={0.7} roughness={0.3} />
+      </mesh>
+    </>
+  );
+}
+
+function SimpleChairUpper({ isNight, accentColor }: { isNight: boolean; accentColor: string }) {
+  return (
+    <>
+      <mesh castShadow position={[0, -0.38, 0]}>
+        <cylinderGeometry args={[0.16, 0.16, 0.12, 12]} />
+        <meshStandardMaterial color={accentColor} roughness={0.2} metalness={0.8} />
+      </mesh>
+      <mesh castShadow position={[0, -0.28, 0]}>
+        <boxGeometry args={[1.0, 0.15, 0.95]} />
+        <meshStandardMaterial color={isNight ? '#0a0a20' : '#e2e8f0'} roughness={0.5} />
+      </mesh>
+      <mesh castShadow position={[0, 0.42, -0.42]} rotation={[0.08, 0, 0]}>
+        <boxGeometry args={[0.9, 1.2, 0.12]} />
+        <meshStandardMaterial color={isNight ? '#040410' : '#cbd5e1'} roughness={0.4} />
+      </mesh>
+      <mesh position={[0, 0.42, -0.49]}>
+        <boxGeometry args={[0.8, 0.04, 0.04]} />
+        <meshBasicMaterial color={accentColor} />
+      </mesh>
+    </>
+  );
+}
+
+function SuspectCard({ position, pinColor, crossed }: {
+  position: [number, number, number];
+  pinColor: string;
+  crossed?: boolean;
+}) {
+  return (
+    <group position={position}>
+      <mesh castShadow>
+        <planeGeometry args={[0.28, 0.36]} />
+        <meshStandardMaterial color="#ffffff" roughness={0.7} />
+      </mesh>
+      <group position={[0, 0.02, 0.002]}>
+        <mesh><planeGeometry args={[0.24, 0.24]} /><meshBasicMaterial color="#334155" /></mesh>
+        <mesh position={[0, 0.03, 0.002]}><circleGeometry args={[0.05, 16]} /><meshBasicMaterial color="#94a3b8" /></mesh>
+        <mesh position={[0, -0.03, 0.002]}><ringGeometry args={[0, 0.08, 16, 1, 0, Math.PI]} /><meshBasicMaterial color="#94a3b8" /></mesh>
+      </group>
+      {crossed && (
+        <group position={[0, 0.02, 0.008]}>
+          <mesh rotation={[0, 0, Math.PI / 4]}><planeGeometry args={[0.22, 0.016]} /><meshBasicMaterial color="#d32f2f" /></mesh>
+          <mesh rotation={[0, 0, -Math.PI / 4]}><planeGeometry args={[0.22, 0.016]} /><meshBasicMaterial color="#d32f2f" /></mesh>
+        </group>
+      )}
+      <PushPin position={[0, 0.15, 0.006]} color={pinColor} />
     </group>
   );
 }
@@ -35,7 +114,6 @@ export default function Workroom({
   const waterDropsRef = useRef<THREE.Group>(null);
   const hologramRef = useRef<THREE.Mesh>(null);
   const cameraSwivelRef = useRef<THREE.Group>(null);
-
 
   const [lampIntensityState, setLampIntensityState] = useState<'off' | 'dim' | 'bright'>('bright');
   const [mugTargetRot, setMugTargetRot] = useState(0);
@@ -71,17 +149,13 @@ export default function Workroom({
     }
 
     if (lampRef.current) {
-      const targetRotY = -0.6;
-      const targetRotZ = 0;
-      lampRef.current.rotation.y = THREE.MathUtils.lerp(lampRef.current.rotation.y, targetRotY, 8 * delta);
-      lampRef.current.rotation.z = THREE.MathUtils.lerp(lampRef.current.rotation.z, targetRotZ, 8 * delta);
+      lampRef.current.rotation.y = THREE.MathUtils.lerp(lampRef.current.rotation.y, -0.6, 8 * delta);
+      lampRef.current.rotation.z = THREE.MathUtils.lerp(lampRef.current.rotation.z, 0, 8 * delta);
     }
 
     if (keyboardRef.current) {
-      const targetY = 0.08;
-      const targetScale = 1.0;
-      keyboardRef.current.position.y = THREE.MathUtils.lerp(keyboardRef.current.position.y, targetY, 8 * delta);
-      keyboardRef.current.scale.setScalar(THREE.MathUtils.lerp(keyboardRef.current.scale.x, targetScale, 10 * delta));
+      keyboardRef.current.position.y = THREE.MathUtils.lerp(keyboardRef.current.position.y, 0.08, 8 * delta);
+      keyboardRef.current.scale.setScalar(THREE.MathUtils.lerp(keyboardRef.current.scale.x, 1.0, 10 * delta));
     }
 
     if (waterCanRef.current) {
@@ -94,35 +168,26 @@ export default function Workroom({
     }
 
     if (waterDropsRef.current) {
-      const children = waterDropsRef.current.children;
-      children.forEach((child, i) => {
+      waterDropsRef.current.children.forEach((child, i) => {
         if (!isWatering) {
           child.scale.setScalar(0);
           child.position.set(-0.35, 0.26, 0.0);
         } else {
           child.scale.setScalar(1);
           const cycle = (t * 2.5 + i * 0.4) % 1.0;
-          const startX = -0.35, startY = 0.26, startZ = 0.0;
-          const endX = -0.7, endY = -0.05, endZ = -0.15;
-          const t_param = cycle;
-          const currentX = THREE.MathUtils.lerp(startX, endX, t_param);
-          const currentY = THREE.MathUtils.lerp(startY, endY, t_param) - 0.22 * Math.sin(t_param * Math.PI);
-          const currentZ = THREE.MathUtils.lerp(startZ, endZ, t_param);
+          const currentX = THREE.MathUtils.lerp(-0.35, -0.7, cycle);
+          const currentY = THREE.MathUtils.lerp(0.26, -0.05, cycle) - 0.22 * Math.sin(cycle * Math.PI);
+          const currentZ = THREE.MathUtils.lerp(0.0, -0.15, cycle);
           child.position.set(currentX, currentY, currentZ);
-          const sizeFactor = Math.sin(t_param * Math.PI) * 0.035 + 0.01;
+          const sizeFactor = Math.sin(cycle * Math.PI) * 0.035 + 0.01;
           child.scale.setScalar(sizeFactor * 25);
         }
       });
     }
   });
 
-  const handlePointerOver = () => {
-    document.body.style.cursor = 'pointer';
-  };
-
-  const handlePointerOut = () => {
-    document.body.style.cursor = 'auto';
-  };
+  const handlePointerOver = () => { document.body.style.cursor = 'pointer'; };
+  const handlePointerOut = () => { document.body.style.cursor = 'auto'; };
 
   const handleMugClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
@@ -140,9 +205,7 @@ export default function Workroom({
     e.stopPropagation();
     if (isWatering) return;
     setIsWatering(true);
-    setTimeout(() => {
-      setIsWatering(false);
-    }, 3800);
+    setTimeout(() => { setIsWatering(false); }, 3800);
   };
 
   return (
@@ -167,14 +230,14 @@ export default function Workroom({
         </mesh>
         <mesh position={[0, 0.1, 0]} rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.098, 0.098, 0.005, 32]} />
-          <meshPhysicalMaterial 
-            color="#ffffff" 
-            transmission={0.95} 
-            opacity={1} 
-            transparent 
-            roughness={0.05} 
-            ior={1.5} 
-            thickness={0.05} 
+          <meshPhysicalMaterial
+            color="#ffffff"
+            transmission={0.95}
+            opacity={1}
+            transparent
+            roughness={0.05}
+            ior={1.5}
+            thickness={0.05}
           />
         </mesh>
       </group>
@@ -190,7 +253,7 @@ export default function Workroom({
       </mesh>
 
       <group position={[-5.8, 4.2, -4.8]} name="security-camera">
-        <mesh castShadow position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <mesh castShadow rotation={[Math.PI / 2, 0, 0]}>
           <cylinderGeometry args={[0.2, 0.2, 0.1, 16]} />
           <meshStandardMaterial color="#050508" metalness={0.8} roughness={0.2} />
         </mesh>
@@ -211,12 +274,10 @@ export default function Workroom({
       </group>
 
       <group position={[5.85, 1.4, 0.5]} rotation={[0, -Math.PI / 2, 0]} name="whiteboard-mesh">
-        
         <mesh castShadow receiveShadow>
           <boxGeometry args={[2.3, 1.6, 0.06]} />
           <meshStandardMaterial color="#3e2723" roughness={0.4} metalness={0.1} />
         </mesh>
-        
         <mesh position={[0, 0, 0.031]}>
           <planeGeometry args={[2.2, 1.5]} />
           <meshStandardMaterial color="#c29b7c" roughness={0.9} metalness={0.05} />
@@ -251,10 +312,7 @@ export default function Workroom({
             <ringGeometry args={[0.035, 0.045, 16]} />
             <meshBasicMaterial color="#ff0000" />
           </mesh>
-          <mesh position={[0, 0.22, 0.006]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.04, 8]} />
-            <meshStandardMaterial color="#00aaff" metalness={0.6} roughness={0.2} />
-          </mesh>
+          <PushPin position={[0, 0.22, 0.006]} color="#00aaff" />
         </group>
 
         <group position={[-0.7, 0.2, 0.035]} name="newspaper-clipping">
@@ -274,10 +332,7 @@ export default function Workroom({
             <planeGeometry args={[0.18, 0.46]} />
             <meshBasicMaterial color="#7f7c6e" />
           </mesh>
-          <mesh position={[0, 0.27, 0.006]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.04, 8]} />
-            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.2} />
-          </mesh>
+          <PushPin position={[0, 0.27, 0.006]} color="#ff0000" />
         </group>
 
         <group position={[0.65, 0.32, 0.035]} name="missing-poster">
@@ -307,63 +362,12 @@ export default function Workroom({
             <planeGeometry args={[0.3, 0.08]} />
             <meshBasicMaterial color="#94a3b8" />
           </mesh>
-          <mesh position={[0, 0.24, 0.006]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.04, 8]} />
-            <meshStandardMaterial color="#00aa00" metalness={0.6} roughness={0.2} />
-          </mesh>
+          <PushPin position={[0, 0.24, 0.006]} color="#00aa00" />
         </group>
 
-        <group position={[-0.6, -0.32, 0.035]} name="suspect-1">
-          <mesh castShadow>
-            <planeGeometry args={[0.28, 0.36]} />
-            <meshStandardMaterial color="#ffffff" roughness={0.7} />
-          </mesh>
-          <group position={[0, 0.02, 0.002]}>
-            <mesh><planeGeometry args={[0.24, 0.24]} /><meshBasicMaterial color="#334155" /></mesh>
-            <mesh position={[0, 0.03, 0.002]}><circleGeometry args={[0.05, 16]} /><meshBasicMaterial color="#94a3b8" /></mesh>
-            <mesh position={[0, -0.03, 0.002]}><ringGeometry args={[0, 0.08, 16, 1, 0, Math.PI]} /><meshBasicMaterial color="#94a3b8" /></mesh>
-          </group>
-          <mesh position={[0, 0.15, 0.006]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.04, 8]} />
-            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.2} />
-          </mesh>
-        </group>
-
-        <group position={[-0.1, -0.32, 0.035]} name="suspect-2">
-          <mesh castShadow>
-            <planeGeometry args={[0.28, 0.36]} />
-            <meshStandardMaterial color="#ffffff" roughness={0.7} />
-          </mesh>
-          <group position={[0, 0.02, 0.002]}>
-            <mesh><planeGeometry args={[0.24, 0.24]} /><meshBasicMaterial color="#334155" /></mesh>
-            <mesh position={[0, 0.03, 0.002]}><circleGeometry args={[0.05, 16]} /><meshBasicMaterial color="#94a3b8" /></mesh>
-            <mesh position={[0, -0.03, 0.002]}><ringGeometry args={[0, 0.08, 16, 1, 0, Math.PI]} /><meshBasicMaterial color="#94a3b8" /></mesh>
-          </group>
-          <group position={[0, 0.02, 0.008]}>
-            <mesh rotation={[0, 0, Math.PI / 4]}><planeGeometry args={[0.22, 0.016]} /><meshBasicMaterial color="#d32f2f" /></mesh>
-            <mesh rotation={[0, 0, -Math.PI / 4]}><planeGeometry args={[0.22, 0.016]} /><meshBasicMaterial color="#d32f2f" /></mesh>
-          </group>
-          <mesh position={[0, 0.15, 0.006]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.04, 8]} />
-            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.2} />
-          </mesh>
-        </group>
-
-        <group position={[0.4, -0.32, 0.035]} name="suspect-3">
-          <mesh castShadow>
-            <planeGeometry args={[0.28, 0.36]} />
-            <meshStandardMaterial color="#ffffff" roughness={0.7} />
-          </mesh>
-          <group position={[0, 0.02, 0.002]}>
-            <mesh><planeGeometry args={[0.24, 0.24]} /><meshBasicMaterial color="#334155" /></mesh>
-            <mesh position={[0, 0.03, 0.002]}><circleGeometry args={[0.05, 16]} /><meshBasicMaterial color="#94a3b8" /></mesh>
-            <mesh position={[0, -0.03, 0.002]}><ringGeometry args={[0, 0.08, 16, 1, 0, Math.PI]} /><meshBasicMaterial color="#94a3b8" /></mesh>
-          </group>
-          <mesh position={[0, 0.15, 0.006]} rotation={[Math.PI / 2, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, 0.04, 8]} />
-            <meshStandardMaterial color="#ff0000" metalness={0.6} roughness={0.2} />
-          </mesh>
-        </group>
+        <SuspectCard position={[-0.6, -0.32, 0.035]} pinColor="#ff0000" />
+        <SuspectCard position={[-0.1, -0.32, 0.035]} pinColor="#ff0000" crossed />
+        <SuspectCard position={[0.4, -0.32, 0.035]} pinColor="#ff0000" />
 
         <mesh position={[0.65, -0.12, 0.036]} rotation={[0, 0, 0.05]} castShadow>
           <planeGeometry args={[0.16, 0.16]} /><meshStandardMaterial color="#fef08a" roughness={0.8} />
@@ -397,7 +401,6 @@ export default function Workroom({
         <meshStandardMaterial color={isNight ? '#141517' : '#f3f4f6'} roughness={0.9} metalness={0.15} />
       </mesh>
 
-
       <group position={[0, 4.3, 0]} name="ceiling-fan-group">
         <mesh castShadow position={[0, 0.3, 0]}>
           <cylinderGeometry args={[0.04, 0.04, 0.6, 8]} />
@@ -408,27 +411,23 @@ export default function Workroom({
           <meshStandardMaterial color={isNight ? '#090918' : '#475569'} roughness={0.2} />
         </mesh>
         <group ref={fanRef}>
-          <mesh position={[1.2, 0, 0]}>
-            <boxGeometry args={[1.8, 0.015, 0.2]} />
-            <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
-          </mesh>
-          <mesh position={[-1.2, 0, 0]}>
-            <boxGeometry args={[1.8, 0.015, 0.2]} />
-            <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
-          </mesh>
-          <mesh position={[0, 0, 1.2]} rotation={[0, Math.PI / 2, 0]}>
-            <boxGeometry args={[1.8, 0.015, 0.2]} />
-            <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
-          </mesh>
-          <mesh position={[0, 0, -1.2]} rotation={[0, Math.PI / 2, 0]}>
-            <boxGeometry args={[1.8, 0.015, 0.2]} />
-            <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
-          </mesh>
+          {[[1.2, 0, 0], [-1.2, 0, 0]].map((pos, i) => (
+            <mesh key={i} position={pos as [number, number, number]}>
+              <boxGeometry args={[1.8, 0.015, 0.2]} />
+              <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
+            </mesh>
+          ))}
+          {[[0, 0, 1.2], [0, 0, -1.2]].map((pos, i) => (
+            <mesh key={`v${i}`} position={pos as [number, number, number]} rotation={[0, Math.PI / 2, 0]}>
+              <boxGeometry args={[1.8, 0.015, 0.2]} />
+              <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
+            </mesh>
+          ))}
         </group>
       </group>
 
       <group position={[0, -1.2, -2.2]} name="desk-assembly">
-        <mesh castShadow receiveShadow position={[0, 0, 0]} name="desk-top-surface">
+        <mesh castShadow receiveShadow name="desk-top-surface">
           <boxGeometry args={[4.2, 0.12, 1.8]} />
           <meshPhysicalMaterial
             color={isNight ? '#0a0d1d' : '#f1f5f9'}
@@ -458,37 +457,9 @@ export default function Workroom({
         </mesh>
 
         <group position={[-0.9, -0.6, 1.4]} rotation={[0, Math.PI, 0]} name="cyberspace-cockpit-chair">
-          <mesh castShadow position={[0, -0.8, 0]}>
-            <cylinderGeometry args={[0.6, 0.62, 0.06, 12]} />
-            <meshStandardMaterial color="#0d0d1e" roughness={0.6} />
-          </mesh>
-          <mesh castShadow position={[0, -0.62, 0]}>
-            <cylinderGeometry args={[0.1, 0.1, 0.36, 8]} />
-            <meshStandardMaterial color="#050510" roughness={0.4} />
-          </mesh>
-          <mesh castShadow position={[0, -0.44, 0]}>
-            <cylinderGeometry args={[0.14, 0.14, 0.08, 12]} />
-            <meshStandardMaterial color="#2d2d38" metalness={0.7} roughness={0.3} />
-          </mesh>
-          <mesh castShadow position={[0, -0.38, 0]}>
-            <cylinderGeometry args={[0.16, 0.16, 0.12, 12]} />
-            <meshStandardMaterial color="#00f0ff" roughness={0.2} metalness={0.8} />
-          </mesh>
-          <mesh castShadow position={[0, -0.28, 0]}>
-            <boxGeometry args={[1.0, 0.15, 0.95]} />
-            <meshStandardMaterial color={isNight ? '#0a0a20' : '#e2e8f0'} roughness={0.5} />
-          </mesh>
-          <mesh castShadow position={[0, 0.42, -0.42]} rotation={[0.08, 0, 0]}>
-            <boxGeometry args={[0.9, 1.2, 0.12]} />
-            <meshStandardMaterial color={isNight ? '#040410' : '#cbd5e1'} roughness={0.4} />
-          </mesh>
-          <mesh position={[0, 0.42, -0.49]}>
-            <boxGeometry args={[0.8, 0.04, 0.04]} />
-            <meshBasicMaterial color="#ff007f" />
-          </mesh>
+          <ChairBase />
+          <SimpleChairUpper isNight={isNight} accentColor="#00f0ff" />
         </group>
-
-
 
         <group
           ref={mugRef}
@@ -500,13 +471,7 @@ export default function Workroom({
         >
           <mesh castShadow position={[0, 0.11, 0]}>
             <cylinderGeometry args={[0.07, 0.07, 0.22, 16]} />
-            <meshStandardMaterial
-              color="#030312"
-              roughness={0.1}
-              metalness={0.8}
-              emissive="#000000"
-              emissiveIntensity={0.25}
-            />
+            <meshStandardMaterial color="#030312" roughness={0.1} metalness={0.8} emissive="#000000" emissiveIntensity={0.25} />
           </mesh>
           <mesh castShadow position={[-0.08, 0.11, 0]} rotation={[0, 0, Math.PI / 2]}>
             <torusGeometry args={[0.06, 0.018, 8, 16, Math.PI]} />
@@ -595,9 +560,8 @@ export default function Workroom({
             )}
           </group>
         </group>
-        
+
         <group position={[-0.5, 0.58, -0.2]} rotation={[0, Math.PI + 0.2, 0]} name="monitor-assembly">
-          
           <mesh castShadow position={[0, -0.18, -0.06]}>
             <cylinderGeometry args={[0.045, 0.045, 0.68, 16]} />
             <meshStandardMaterial color="#1a1c24" roughness={0.3} metalness={0.93} />
@@ -610,7 +574,6 @@ export default function Workroom({
             <boxGeometry args={[0.14, 0.14, 0.08]} />
             <meshStandardMaterial color="#07080c" roughness={0.5} metalness={0.88} />
           </mesh>
-          
           <group position={[0, 0.12, 0.02]} name="monitor-panel-main">
             <mesh castShadow>
               <boxGeometry args={[1.2, 0.8, 0.06]} />
@@ -624,7 +587,6 @@ export default function Workroom({
               <planeGeometry args={[1.1, 0.7]} />
               <meshBasicMaterial color="#00f0ff" transparent opacity={0.15} blending={THREE.AdditiveBlending} />
             </mesh>
-            
             <mesh position={[-0.2, 0.15, 0.040]}>
               <planeGeometry args={[0.3, 0.2]} />
               <meshBasicMaterial color="#ff007f" transparent opacity={0.6} />
@@ -647,7 +609,7 @@ export default function Workroom({
           </mesh>
           <mesh ref={hologramRef} position={[0, 0.18, 0]}>
             <icosahedronGeometry args={[0.1, 1]} />
-            <meshBasicMaterial color="#00f0ff" wireframe={true} transparent opacity={0.6} blending={THREE.AdditiveBlending} />
+            <meshBasicMaterial color="#00f0ff" wireframe transparent opacity={0.6} blending={THREE.AdditiveBlending} />
           </mesh>
           <pointLight position={[0, 0.1, 0]} distance={1.0} intensity={2.0} color="#00f0ff" />
         </group>
@@ -691,7 +653,7 @@ export default function Workroom({
             <meshStandardMaterial color="#020104" roughness={0.9} />
           </mesh>
           <group position={[0, 0.4, 0]}>
-            <mesh castShadow position={[0, 0, 0]}>
+            <mesh castShadow>
               <boxGeometry args={[0.06, 0.4, 0.06]} />
               <meshStandardMaterial color="#1a6e2a" roughness={0.9} />
             </mesh>
@@ -706,21 +668,19 @@ export default function Workroom({
           </group>
         </group>
 
-        <group 
-          position={[-0.5, 0.06, -0.8]} 
-          rotation={[0, Math.PI + 0.2, 0]} 
+        <group
+          position={[-0.5, 0.06, -0.8]}
+          rotation={[0, Math.PI + 0.2, 0]}
           name="keyboard-mouse"
           ref={keyboardRef}
           onPointerOver={handlePointerOver}
           onPointerOut={handlePointerOut}
         >
-          
           <group position={[-0.1, 0, 0]}>
             <mesh castShadow position={[0, 0.01, 0]} rotation={[0.05, 0, 0]}>
               <boxGeometry args={[0.82, 0.025, 0.26]} />
               <meshStandardMaterial color="#111218" roughness={0.7} />
             </mesh>
-            
             <mesh position={[-0.12, 0.025, 0]} rotation={[0.05, 0, 0]}>
               <boxGeometry args={[0.54, 0.015, 0.22]} />
               <meshStandardMaterial color="#05050a" roughness={0.4} />
@@ -729,7 +689,6 @@ export default function Workroom({
               <boxGeometry args={[0.55, 0.01, 0.23]} />
               <meshStandardMaterial color="#00f0ff" emissive="#00f0ff" emissiveIntensity={0.5} />
             </mesh>
-            
             <mesh position={[0.26, 0.025, 0]} rotation={[0.05, 0, 0]}>
               <boxGeometry args={[0.16, 0.015, 0.22]} />
               <meshStandardMaterial color="#05050a" roughness={0.4} />
@@ -739,8 +698,6 @@ export default function Workroom({
               <meshStandardMaterial color="#00f0ff" emissive="#00f0ff" emissiveIntensity={0.5} />
             </mesh>
           </group>
-          
-          
           <group position={[0.6, 0.025, 0]}>
             <mesh castShadow rotation={[Math.PI / 2, 0, 0]}>
               <capsuleGeometry args={[0.045, 0.06, 8, 16]} />
@@ -823,39 +780,12 @@ export default function Workroom({
         </group>
 
         <group position={[0.9, -0.6, 1.4]} rotation={[0, Math.PI, 0]} name="front-chair-2">
-          <mesh castShadow position={[0, -0.8, 0]}>
-            <cylinderGeometry args={[0.6, 0.62, 0.06, 12]} />
-            <meshStandardMaterial color="#0d0d1e" roughness={0.6} />
-          </mesh>
-          <mesh castShadow position={[0, -0.62, 0]}>
-            <cylinderGeometry args={[0.1, 0.1, 0.36, 8]} />
-            <meshStandardMaterial color="#050510" roughness={0.4} />
-          </mesh>
-          <mesh castShadow position={[0, -0.44, 0]}>
-            <cylinderGeometry args={[0.14, 0.14, 0.08, 12]} />
-            <meshStandardMaterial color="#2d2d38" metalness={0.7} roughness={0.3} />
-          </mesh>
-          <mesh castShadow position={[0, -0.38, 0]}>
-            <cylinderGeometry args={[0.16, 0.16, 0.12, 12]} />
-            <meshStandardMaterial color="#00f0ff" roughness={0.2} metalness={0.8} />
-          </mesh>
-          <mesh castShadow position={[0, -0.28, 0]}>
-            <boxGeometry args={[1.0, 0.15, 0.95]} />
-            <meshStandardMaterial color={isNight ? '#0a0a20' : '#e2e8f0'} roughness={0.5} />
-          </mesh>
-          <mesh castShadow position={[0, 0.42, -0.42]} rotation={[0.08, 0, 0]}>
-            <boxGeometry args={[0.9, 1.2, 0.12]} />
-            <meshStandardMaterial color={isNight ? '#040410' : '#cbd5e1'} roughness={0.4} />
-          </mesh>
-          <mesh position={[0, 0.42, -0.49]}>
-            <boxGeometry args={[0.8, 0.04, 0.04]} />
-            <meshBasicMaterial color="#00f0ff" />
-          </mesh>
+          <ChairBase />
+          <SimpleChairUpper isNight={isNight} accentColor="#00f0ff" />
         </group>
 
         <group
           position={[0, -0.6, -1.7]}
-          rotation={[0, 0, 0]}
           name="back-chair-1"
           onPointerDown={(e) => {
             e.stopPropagation();
@@ -884,7 +814,6 @@ export default function Workroom({
               if (e.target && (e.target as any).releasePointerCapture) {
                 (e.target as any).releasePointerCapture(e.pointerId);
               }
-
               onChairDragChange?.(false);
             }
           }}
@@ -898,64 +827,38 @@ export default function Workroom({
           }}
         >
           <group name="chair-static-base">
-            <mesh castShadow position={[0, -0.8, 0]}>
-              <cylinderGeometry args={[0.6, 0.62, 0.06, 12]} />
-              <meshStandardMaterial color="#0d0d1e" roughness={0.6} />
-            </mesh>
-            <mesh castShadow position={[0, -0.62, 0]}>
-              <cylinderGeometry args={[0.1, 0.1, 0.36, 8]} />
-              <meshStandardMaterial color="#050510" roughness={0.4} />
-            </mesh>
-            <mesh castShadow position={[0, -0.44, 0]}>
-              <cylinderGeometry args={[0.14, 0.14, 0.08, 12]} />
-              <meshStandardMaterial color="#2d2d38" metalness={0.7} roughness={0.3} />
-            </mesh>
+            <ChairBase />
           </group>
 
           <group ref={chairRef} name="chair-rotating-upper">
-
             <mesh castShadow position={[0, -0.38, 0]}>
               <cylinderGeometry args={[0.16, 0.16, 0.12, 12]} />
               <meshStandardMaterial color="#ff007f" roughness={0.2} metalness={0.8} />
             </mesh>
-            
-
             <mesh castShadow position={[0, -0.26, 0]}>
               <boxGeometry args={[0.95, 0.18, 0.85]} />
               <meshStandardMaterial color="#ff007f" roughness={0.4} emissive="#ff007f" emissiveIntensity={0.1} />
             </mesh>
-            
-
             <mesh castShadow position={[0, 0.5, -0.38]} rotation={[0.12, 0, 0]}>
               <boxGeometry args={[0.8, 1.4, 0.15]} />
               <meshStandardMaterial color={isNight ? '#040410' : '#cbd5e1'} roughness={0.3} />
             </mesh>
-            
-
             <mesh position={[0, 0.5, -0.46]} rotation={[0.12, 0, 0]}>
               <boxGeometry args={[0.1, 1.3, 0.04]} />
               <meshBasicMaterial color="#ff007f" />
             </mesh>
-            
-
             <mesh castShadow position={[-0.38, 0.5, -0.32]} rotation={[0.12, -0.15, 0]}>
               <boxGeometry args={[0.15, 1.35, 0.2]} />
               <meshStandardMaterial color="#ff007f" roughness={0.4} emissive="#ff007f" emissiveIntensity={0.1} />
             </mesh>
-            
-
             <mesh castShadow position={[0.38, 0.5, -0.32]} rotation={[0.12, 0.15, 0]}>
               <boxGeometry args={[0.15, 1.35, 0.2]} />
               <meshStandardMaterial color="#ff007f" roughness={0.4} emissive="#ff007f" emissiveIntensity={0.1} />
             </mesh>
-            
-
             <mesh castShadow position={[0, 1.25, -0.3]} rotation={[0.12, 0, Math.PI / 2]}>
               <cylinderGeometry args={[0.15, 0.15, 0.5, 12]} />
               <meshStandardMaterial color={isNight ? '#0a0a20' : '#e2e8f0'} roughness={0.6} />
             </mesh>
-            
-
             <mesh castShadow position={[-0.45, 0.05, 0.1]}>
               <boxGeometry args={[0.04, 0.45, 0.06]} />
               <meshStandardMaterial color="#2d2d38" metalness={0.6} roughness={0.4} />
@@ -978,132 +881,135 @@ export default function Workroom({
 
       <group position={[4.2, -0.9, -3.4]} rotation={[0, -0.25, 0]} name="bookshelf-assembly">
         <mesh castShadow position={[-1.0, 0.8, 0]}>
-            <boxGeometry args={[0.08, 3.2, 0.7]} />
-            <meshStandardMaterial color="#050510" roughness={0.4} />
-          </mesh>
-          <mesh castShadow position={[1.0, 0.8, 0]}>
-            <boxGeometry args={[0.08, 3.2, 0.7]} />
-            <meshStandardMaterial color="#050510" roughness={0.4} />
-          </mesh>
-          <mesh castShadow receiveShadow position={[0, 0.1, 0]}>
-            <boxGeometry args={[2.0, 0.08, 0.65]} />
-            <meshStandardMaterial color="#050510" roughness={0.3} metalness={0.7} />
-          </mesh>
-          <mesh position={[0, 0.1, 0.33]}>
-            <boxGeometry args={[1.9, 0.02, 0.02]} />
-            <meshBasicMaterial color="#00f0ff" />
-          </mesh>
-          <group position={[0, 0.45, -0.05]}>
-            <mesh castShadow position={[-0.7, 0, 0]} rotation={[0, 0.04, 0]}>
-              <boxGeometry args={[0.13, 0.58, 0.45]} />
-              <meshStandardMaterial color="#00f0ff" roughness={0.2} emissive="#00f0ff" emissiveIntensity={0.15} />
-            </mesh>
-            <mesh castShadow position={[-0.52, 0, 0.01]} rotation={[0, -0.06, 0]}>
-              <boxGeometry args={[0.14, 0.65, 0.42]} />
-              <meshStandardMaterial color="#ff007f" roughness={0.2} emissive="#ff007f" emissiveIntensity={0.1} />
-            </mesh>
-            <mesh castShadow position={[-0.32, -0.05, 0]} rotation={[0, 0, -0.28]}>
-              <boxGeometry args={[0.12, 0.54, 0.45]} />
-              <meshStandardMaterial color="#421a68" roughness={0.6} />
-            </mesh>
-            <mesh castShadow position={[0.4, -0.15, 0]}>
-              <boxGeometry args={[0.3, 0.3, 0.3]} />
-              <meshStandardMaterial color="#141428" roughness={0.1} metalness={0.9} />
-            </mesh>
-            <mesh castShadow position={[0.8, -0.25, 0]} rotation={[0, 0.2, 0]}>
-              <boxGeometry args={[0.4, 0.08, 0.5]} />
-              <meshStandardMaterial color="#00f0ff" roughness={0.3} emissive="#00f0ff" emissiveIntensity={0.05} />
-            </mesh>
-            <mesh castShadow position={[0.8, -0.15, 0]} rotation={[0, -0.1, 0]}>
-              <boxGeometry args={[0.38, 0.08, 0.48]} />
-              <meshStandardMaterial color="#333344" roughness={0.7} />
-            </mesh>
-            <mesh castShadow position={[0.8, -0.05, 0]} rotation={[0, 0.05, 0]}>
-              <boxGeometry args={[0.35, 0.08, 0.45]} />
-              <meshStandardMaterial color="#ff007f" roughness={0.4} />
-            </mesh>
-          </group>
-          <mesh castShadow receiveShadow position={[0, 1.1, 0]}>
-            <boxGeometry args={[2.0, 0.08, 0.65]} />
-            <meshStandardMaterial color="#050510" roughness={0.3} metalness={0.7} />
-          </mesh>
-          <mesh position={[0, 1.1, 0.33]}>
-            <boxGeometry args={[1.9, 0.02, 0.02]} />
-            <meshBasicMaterial color="#00f0ff" />
-          </mesh>
-          <group position={[0, 1.42, -0.05]}>
-            <mesh castShadow position={[0.6, 0, 0.02]}>
-              <boxGeometry args={[0.3, 0.52, 0.48]} />
-              <meshStandardMaterial color="#1a1c31" roughness={0.5} />
-            </mesh>
-            <mesh castShadow position={[-0.2, 0, 0]} rotation={[0, 0.1, 0.15]}>
-              <boxGeometry args={[0.11, 0.52, 0.42]} />
-              <meshStandardMaterial color="#00f0ff" roughness={0.3} />
-            </mesh>
-            <mesh castShadow position={[-0.6, -0.12, 0]} rotation={[0, 0.3, 0]}>
-              <boxGeometry args={[0.24, 0.24, 0.24]} />
-              <meshStandardMaterial color="#ff007f" roughness={0.1} emissive="#ff007f" emissiveIntensity={0.2} />
-            </mesh>
-            <pointLight position={[-0.6, -0.12, 0.2]} color="#ff007f" intensity={1.0} distance={1.2} />
-            
-            <mesh castShadow position={[-0.9, -0.05, 0]} rotation={[0, -0.2, 0]}>
-              <boxGeometry args={[0.08, 0.4, 0.45]} />
-              <meshStandardMaterial color="#ff007f" roughness={0.5} emissive="#ff007f" emissiveIntensity={0.1} />
-            </mesh>
-            <mesh castShadow position={[0.2, 0.05, 0]}>
-              <boxGeometry args={[0.08, 0.6, 0.5]} />
-              <meshStandardMaterial color="#2d2d38" metalness={0.5} roughness={0.5} />
-            </mesh>
-            <mesh castShadow position={[0.3, -0.05, 0]} rotation={[0, 0, 0.1]}>
-              <boxGeometry args={[0.08, 0.4, 0.48]} />
-              <meshStandardMaterial color="#00f0ff" roughness={0.5} />
-            </mesh>
+          <boxGeometry args={[0.08, 3.2, 0.7]} />
+          <meshStandardMaterial color="#050510" roughness={0.4} />
+        </mesh>
+        <mesh castShadow position={[1.0, 0.8, 0]}>
+          <boxGeometry args={[0.08, 3.2, 0.7]} />
+          <meshStandardMaterial color="#050510" roughness={0.4} />
+        </mesh>
 
-            <group position={[0.2, -0.21, 0.12]} rotation={[0, -0.4, 0]}>
-              <mesh castShadow position={[0, 0.01, 0]}>
-                <cylinderGeometry args={[0.10, 0.12, 0.02, 8]} />
-                <meshStandardMaterial color="#0b0d1a" roughness={0.1} metalness={0.9} />
-              </mesh>
-              <mesh castShadow position={[-0.03, 0.06, 0]}>
-                <boxGeometry args={[0.025, 0.08, 0.025]} />
-                <meshStandardMaterial color="#1e1b38" metalness={0.8} />
-              </mesh>
-              <mesh castShadow position={[0.03, 0.06, 0]}>
-                <boxGeometry args={[0.025, 0.08, 0.025]} />
-                <meshStandardMaterial color="#1e1b38" metalness={0.8} />
-              </mesh>
-              <mesh castShadow position={[0, 0.16, 0]}>
-                <boxGeometry args={[0.11, 0.12, 0.08]} />
-                <meshStandardMaterial color="#0e111d" roughness={0.3} metalness={0.7} />
-              </mesh>
-              <mesh position={[0, 0.16, 0.041]}>
-                <planeGeometry args={[0.04, 0.04]} />
-                <meshBasicMaterial color="#00f0ff" />
-              </mesh>
-              <mesh castShadow position={[0, 0.25, 0]}>
-                <boxGeometry args={[0.06, 0.06, 0.06]} />
-                <meshStandardMaterial color="#1f1f38" metalness={0.9} />
-              </mesh>
-              <mesh position={[0, 0.26, 0.031]}>
-                <planeGeometry args={[0.04, 0.01]} />
-                <meshBasicMaterial color="#ff007f" />
-              </mesh>
-              <mesh castShadow position={[-0.07, 0.18, 0]} rotation={[0, 0, 0.3]}>
-                <boxGeometry args={[0.03, 0.07, 0.06]} />
-                <meshStandardMaterial color="#00f0ff" />
-              </mesh>
-              <mesh castShadow position={[0.07, 0.18, 0]} rotation={[0, 0, -0.3]}>
-                <boxGeometry args={[0.03, 0.07, 0.06]} />
-                <meshStandardMaterial color="#00f0ff" />
-              </mesh>
-            </group>
-          </group>
-          <mesh castShadow receiveShadow position={[0, 2.1, 0]}>
-            <boxGeometry args={[2.0, 0.08, 0.65]} />
-            <meshStandardMaterial color="#050510" roughness={0.3} metalness={0.7} />
+        <mesh castShadow receiveShadow position={[0, 0.1, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.65]} />
+          <meshStandardMaterial color="#050510" roughness={0.3} metalness={0.7} />
+        </mesh>
+        <mesh position={[0, 0.1, 0.33]}>
+          <boxGeometry args={[1.9, 0.02, 0.02]} />
+          <meshBasicMaterial color="#00f0ff" />
+        </mesh>
+
+        <group position={[0, 0.45, -0.05]}>
+          <mesh castShadow position={[-0.7, 0, 0]} rotation={[0, 0.04, 0]}>
+            <boxGeometry args={[0.13, 0.58, 0.45]} />
+            <meshStandardMaterial color="#00f0ff" roughness={0.2} emissive="#00f0ff" emissiveIntensity={0.15} />
+          </mesh>
+          <mesh castShadow position={[-0.52, 0, 0.01]} rotation={[0, -0.06, 0]}>
+            <boxGeometry args={[0.14, 0.65, 0.42]} />
+            <meshStandardMaterial color="#ff007f" roughness={0.2} emissive="#ff007f" emissiveIntensity={0.1} />
+          </mesh>
+          <mesh castShadow position={[-0.32, -0.05, 0]} rotation={[0, 0, -0.28]}>
+            <boxGeometry args={[0.12, 0.54, 0.45]} />
+            <meshStandardMaterial color="#421a68" roughness={0.6} />
+          </mesh>
+          <mesh castShadow position={[0.4, -0.15, 0]}>
+            <boxGeometry args={[0.3, 0.3, 0.3]} />
+            <meshStandardMaterial color="#141428" roughness={0.1} metalness={0.9} />
+          </mesh>
+          <mesh castShadow position={[0.8, -0.25, 0]} rotation={[0, 0.2, 0]}>
+            <boxGeometry args={[0.4, 0.08, 0.5]} />
+            <meshStandardMaterial color="#00f0ff" roughness={0.3} emissive="#00f0ff" emissiveIntensity={0.05} />
+          </mesh>
+          <mesh castShadow position={[0.8, -0.15, 0]} rotation={[0, -0.1, 0]}>
+            <boxGeometry args={[0.38, 0.08, 0.48]} />
+            <meshStandardMaterial color="#333344" roughness={0.7} />
+          </mesh>
+          <mesh castShadow position={[0.8, -0.05, 0]} rotation={[0, 0.05, 0]}>
+            <boxGeometry args={[0.35, 0.08, 0.45]} />
+            <meshStandardMaterial color="#ff007f" roughness={0.4} />
           </mesh>
         </group>
-      </group>
 
+        <mesh castShadow receiveShadow position={[0, 1.1, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.65]} />
+          <meshStandardMaterial color="#050510" roughness={0.3} metalness={0.7} />
+        </mesh>
+        <mesh position={[0, 1.1, 0.33]}>
+          <boxGeometry args={[1.9, 0.02, 0.02]} />
+          <meshBasicMaterial color="#00f0ff" />
+        </mesh>
+
+        <group position={[0, 1.42, -0.05]}>
+          <mesh castShadow position={[0.6, 0, 0.02]}>
+            <boxGeometry args={[0.3, 0.52, 0.48]} />
+            <meshStandardMaterial color="#1a1c31" roughness={0.5} />
+          </mesh>
+          <mesh castShadow position={[-0.2, 0, 0]} rotation={[0, 0.1, 0.15]}>
+            <boxGeometry args={[0.11, 0.52, 0.42]} />
+            <meshStandardMaterial color="#00f0ff" roughness={0.3} />
+          </mesh>
+          <mesh castShadow position={[-0.6, -0.12, 0]} rotation={[0, 0.3, 0]}>
+            <boxGeometry args={[0.24, 0.24, 0.24]} />
+            <meshStandardMaterial color="#ff007f" roughness={0.1} emissive="#ff007f" emissiveIntensity={0.2} />
+          </mesh>
+          <pointLight position={[-0.6, -0.12, 0.2]} color="#ff007f" intensity={1.0} distance={1.2} />
+          <mesh castShadow position={[-0.9, -0.05, 0]} rotation={[0, -0.2, 0]}>
+            <boxGeometry args={[0.08, 0.4, 0.45]} />
+            <meshStandardMaterial color="#ff007f" roughness={0.5} emissive="#ff007f" emissiveIntensity={0.1} />
+          </mesh>
+          <mesh castShadow position={[0.2, 0.05, 0]}>
+            <boxGeometry args={[0.08, 0.6, 0.5]} />
+            <meshStandardMaterial color="#2d2d38" metalness={0.5} roughness={0.5} />
+          </mesh>
+          <mesh castShadow position={[0.3, -0.05, 0]} rotation={[0, 0, 0.1]}>
+            <boxGeometry args={[0.08, 0.4, 0.48]} />
+            <meshStandardMaterial color="#00f0ff" roughness={0.5} />
+          </mesh>
+
+          <group position={[0.2, -0.21, 0.12]} rotation={[0, -0.4, 0]}>
+            <mesh castShadow position={[0, 0.01, 0]}>
+              <cylinderGeometry args={[0.10, 0.12, 0.02, 8]} />
+              <meshStandardMaterial color="#0b0d1a" roughness={0.1} metalness={0.9} />
+            </mesh>
+            <mesh castShadow position={[-0.03, 0.06, 0]}>
+              <boxGeometry args={[0.025, 0.08, 0.025]} />
+              <meshStandardMaterial color="#1e1b38" metalness={0.8} />
+            </mesh>
+            <mesh castShadow position={[0.03, 0.06, 0]}>
+              <boxGeometry args={[0.025, 0.08, 0.025]} />
+              <meshStandardMaterial color="#1e1b38" metalness={0.8} />
+            </mesh>
+            <mesh castShadow position={[0, 0.16, 0]}>
+              <boxGeometry args={[0.11, 0.12, 0.08]} />
+              <meshStandardMaterial color="#0e111d" roughness={0.3} metalness={0.7} />
+            </mesh>
+            <mesh position={[0, 0.16, 0.041]}>
+              <planeGeometry args={[0.04, 0.04]} />
+              <meshBasicMaterial color="#00f0ff" />
+            </mesh>
+            <mesh castShadow position={[0, 0.25, 0]}>
+              <boxGeometry args={[0.06, 0.06, 0.06]} />
+              <meshStandardMaterial color="#1f1f38" metalness={0.9} />
+            </mesh>
+            <mesh position={[0, 0.26, 0.031]}>
+              <planeGeometry args={[0.04, 0.01]} />
+              <meshBasicMaterial color="#ff007f" />
+            </mesh>
+            <mesh castShadow position={[-0.07, 0.18, 0]} rotation={[0, 0, 0.3]}>
+              <boxGeometry args={[0.03, 0.07, 0.06]} />
+              <meshStandardMaterial color="#00f0ff" />
+            </mesh>
+            <mesh castShadow position={[0.07, 0.18, 0]} rotation={[0, 0, -0.3]}>
+              <boxGeometry args={[0.03, 0.07, 0.06]} />
+              <meshStandardMaterial color="#00f0ff" />
+            </mesh>
+          </group>
+        </group>
+
+        <mesh castShadow receiveShadow position={[0, 2.1, 0]}>
+          <boxGeometry args={[2.0, 0.08, 0.65]} />
+          <meshStandardMaterial color="#050510" roughness={0.3} metalness={0.7} />
+        </mesh>
+      </group>
+    </group>
   );
 }
