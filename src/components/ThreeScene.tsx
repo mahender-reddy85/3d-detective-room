@@ -4,9 +4,6 @@ import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import Workroom from './Workroom';
 
-interface ThreeSceneProps {
-  isNight: boolean;
-}
 
 function useKeyboard() {
   const keys = useRef({
@@ -212,7 +209,7 @@ function Cursor3D() {
   );
 }
 
-export default function ThreeScene({ isNight }: ThreeSceneProps) {
+export default function ThreeScene() {
   const [isDraggingChair, setIsDraggingChair] = useState(false);
   const controlsRef = useRef<any>(null);
 
@@ -220,16 +217,16 @@ export default function ThreeScene({ isNight }: ThreeSceneProps) {
     <div
       id="webgl-canvas-viewport"
       className="w-full h-full relative transition-colors cursor-none"
-      style={{ backgroundColor: isNight ? '#04040a' : '#cbd5e1' }}
+      style={{ backgroundColor: '#cbd5e1' }}
     >
       <Canvas
         camera={{ position: [0, 1.8, 7.0], fov: 60, near: 0.1, far: 50 }}
         gl={{ antialias: true }}
       >
-        <ambientLight intensity={isNight ? 0.2 : 0.85} color={isNight ? '#0b0b28' : '#e2e8f0'} />
+        <ambientLight intensity={0.85} color="#e2e8f0" />
 
         <hemisphereLight
-          intensity={isNight ? 0.3 : 0.85}
+          intensity={0.85}
           color="#00f0ff"
           groundColor="#ff007f"
         />
@@ -238,19 +235,18 @@ export default function ThreeScene({ isNight }: ThreeSceneProps) {
           position={[0, 4.0, -2.0]}
           angle={Math.PI / 3}
           penumbra={0.8}
-          intensity={isNight ? 2.2 : 4.5}
+          intensity={4.5}
           color="#00f0ff"
         />
 
         <pointLight
           position={[0, -0.2, -1.5]}
-          intensity={isNight ? 1.4 : 2.5}
+          intensity={2.5}
           distance={8}
           color="#ff007f"
         />
 
         <Workroom
-          isNight={isNight}
           onChairDragChange={setIsDraggingChair}
         />
 

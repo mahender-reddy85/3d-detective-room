@@ -47,7 +47,7 @@ function ChairBase() {
   );
 }
 
-function SimpleChairUpper({ isNight, accentColor }: { isNight: boolean; accentColor: string }) {
+function SimpleChairUpper({ accentColor }: { accentColor: string }) {
   return (
     <>
       <mesh castShadow position={[0, -0.38, 0]}>
@@ -56,11 +56,11 @@ function SimpleChairUpper({ isNight, accentColor }: { isNight: boolean; accentCo
       </mesh>
       <mesh castShadow position={[0, -0.28, 0]}>
         <boxGeometry args={[1.0, 0.15, 0.95]} />
-        <meshStandardMaterial color={isNight ? '#0a0a20' : '#e2e8f0'} roughness={0.5} />
+        <meshStandardMaterial color="#e2e8f0" roughness={0.5} />
       </mesh>
       <mesh castShadow position={[0, 0.42, -0.42]} rotation={[0.08, 0, 0]}>
         <boxGeometry args={[0.9, 1.2, 0.12]} />
-        <meshStandardMaterial color={isNight ? '#040410' : '#cbd5e1'} roughness={0.4} />
+        <meshStandardMaterial color="#cbd5e1" roughness={0.4} />
       </mesh>
       <mesh position={[0, 0.42, -0.49]}>
         <boxGeometry args={[0.8, 0.04, 0.04]} />
@@ -98,12 +98,10 @@ function SuspectCard({ position, pinColor, crossed }: {
 }
 
 interface WorkroomProps {
-  isNight: boolean;
   onChairDragChange?: (isDragging: boolean) => void;
 }
 
 export default function Workroom({
-  isNight,
   onChairDragChange,
 }: WorkroomProps) {
   const fanRef = useRef<THREE.Group>(null);
@@ -212,7 +210,7 @@ export default function Workroom({
     <group name="workroom-assembly">
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.5, 0]} receiveShadow name="room-floor">
         <planeGeometry args={[12, 10]} />
-        <meshStandardMaterial color={isNight ? '#101115' : '#e2e8f0'} roughness={0.85} metalness={0.1} />
+        <meshStandardMaterial color="#e2e8f0" roughness={0.85} metalness={0.1} />
       </mesh>
 
       <group position={[4.5, -2.48, 1.8]} rotation={[-Math.PI / 2, 0, 0.6]} name="magnifying-glass">
@@ -244,12 +242,12 @@ export default function Workroom({
 
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 4.5, 0]} receiveShadow name="room-ceiling">
         <planeGeometry args={[12, 10]} />
-        <meshStandardMaterial color={isNight ? '#101115' : '#e2e8f0'} roughness={0.95} />
+        <meshStandardMaterial color="#e2e8f0" roughness={0.95} />
       </mesh>
 
       <mesh position={[0, 1, -5]} receiveShadow name="room-backwall">
         <boxGeometry args={[12, 7, 0.1]} />
-        <meshStandardMaterial color={isNight ? '#141517' : '#f3f4f6'} roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color="#f3f4f6" roughness={0.9} metalness={0.15} />
       </mesh>
 
       <group position={[-5.8, 4.2, -4.8]} name="security-camera">
@@ -393,12 +391,12 @@ export default function Workroom({
 
       <mesh position={[6, 1, 0]} rotation={[0, -Math.PI / 2, 0]} name="room-right-wall">
         <planeGeometry args={[10, 7]} />
-        <meshStandardMaterial color={isNight ? '#141517' : '#f3f4f6'} roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color="#f3f4f6" roughness={0.9} metalness={0.15} />
       </mesh>
 
       <mesh position={[-6, 1, 0]} rotation={[0, Math.PI / 2, 0]} name="room-left-wall">
         <planeGeometry args={[10, 7]} />
-        <meshStandardMaterial color={isNight ? '#141517' : '#f3f4f6'} roughness={0.9} metalness={0.15} />
+        <meshStandardMaterial color="#f3f4f6" roughness={0.9} metalness={0.15} />
       </mesh>
 
       <group position={[0, 4.3, 0]} name="ceiling-fan-group">
@@ -408,19 +406,19 @@ export default function Workroom({
         </mesh>
         <mesh castShadow>
           <cylinderGeometry args={[0.4, 0.4, 0.15, 12]} />
-          <meshStandardMaterial color={isNight ? '#090918' : '#475569'} roughness={0.2} />
+          <meshStandardMaterial color="#475569" roughness={0.2} />
         </mesh>
         <group ref={fanRef}>
           {[[1.2, 0, 0], [-1.2, 0, 0]].map((pos, i) => (
             <mesh key={i} position={pos as [number, number, number]}>
               <boxGeometry args={[1.8, 0.015, 0.2]} />
-              <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
+              <meshStandardMaterial color="#64748b" roughness={0.6} />
             </mesh>
           ))}
           {[[0, 0, 1.2], [0, 0, -1.2]].map((pos, i) => (
             <mesh key={`v${i}`} position={pos as [number, number, number]} rotation={[0, Math.PI / 2, 0]}>
               <boxGeometry args={[1.8, 0.015, 0.2]} />
-              <meshStandardMaterial color={isNight ? '#0b0c16' : '#64748b'} roughness={0.6} />
+              <meshStandardMaterial color="#64748b" roughness={0.6} />
             </mesh>
           ))}
         </group>
@@ -430,7 +428,7 @@ export default function Workroom({
         <mesh castShadow receiveShadow name="desk-top-surface">
           <boxGeometry args={[4.2, 0.12, 1.8]} />
           <meshPhysicalMaterial
-            color={isNight ? '#0a0d1d' : '#f1f5f9'}
+            color="#f1f5f9"
             transparent={true}
             opacity={0.35}
             roughness={0.05}
@@ -444,21 +442,21 @@ export default function Workroom({
         </mesh>
         <mesh castShadow position={[-1.9, -0.66, 0]} name="desk-leg-l">
           <boxGeometry args={[0.15, 1.2, 1.4]} />
-          <meshStandardMaterial color={isNight ? '#050510' : '#475569'} roughness={0.6} />
+          <meshStandardMaterial color="#475569" roughness={0.6} />
         </mesh>
         <mesh castShadow position={[1.9, -0.66, 0]} name="desk-leg-r">
           <boxGeometry args={[0.15, 1.2, 1.4]} />
-          <meshStandardMaterial color={isNight ? '#050510' : '#475569'} roughness={0.6} />
+          <meshStandardMaterial color="#475569" roughness={0.6} />
         </mesh>
 
         <mesh position={[0, 0.015, 0.91]} name="desk-neon-trim">
           <boxGeometry args={[4.0, 0.03, 0.03]} />
-          <meshBasicMaterial color={isNight ? '#ff007f' : '#00f0ff'} />
+          <meshBasicMaterial color="#00f0ff" />
         </mesh>
 
         <group position={[-0.9, -0.6, 1.4]} rotation={[0, Math.PI, 0]} name="cyberspace-cockpit-chair">
           <ChairBase />
-          <SimpleChairUpper isNight={isNight} accentColor="#00f0ff" />
+          <SimpleChairUpper accentColor="#00f0ff" />
         </group>
 
         <group
@@ -781,7 +779,7 @@ export default function Workroom({
 
         <group position={[0.9, -0.6, 1.4]} rotation={[0, Math.PI, 0]} name="front-chair-2">
           <ChairBase />
-          <SimpleChairUpper isNight={isNight} accentColor="#00f0ff" />
+          <SimpleChairUpper accentColor="#00f0ff" />
         </group>
 
         <group
@@ -841,7 +839,7 @@ export default function Workroom({
             </mesh>
             <mesh castShadow position={[0, 0.5, -0.38]} rotation={[0.12, 0, 0]}>
               <boxGeometry args={[0.8, 1.4, 0.15]} />
-              <meshStandardMaterial color={isNight ? '#040410' : '#cbd5e1'} roughness={0.3} />
+              <meshStandardMaterial color="#cbd5e1" roughness={0.3} />
             </mesh>
             <mesh position={[0, 0.5, -0.46]} rotation={[0.12, 0, 0]}>
               <boxGeometry args={[0.1, 1.3, 0.04]} />
@@ -857,7 +855,7 @@ export default function Workroom({
             </mesh>
             <mesh castShadow position={[0, 1.25, -0.3]} rotation={[0.12, 0, Math.PI / 2]}>
               <cylinderGeometry args={[0.15, 0.15, 0.5, 12]} />
-              <meshStandardMaterial color={isNight ? '#0a0a20' : '#e2e8f0'} roughness={0.6} />
+              <meshStandardMaterial color="#e2e8f0" roughness={0.6} />
             </mesh>
             <mesh castShadow position={[-0.45, 0.05, 0.1]}>
               <boxGeometry args={[0.04, 0.45, 0.06]} />
@@ -865,7 +863,7 @@ export default function Workroom({
             </mesh>
             <mesh castShadow position={[-0.45, 0.28, 0.1]}>
               <boxGeometry args={[0.1, 0.04, 0.4]} />
-              <meshStandardMaterial color={isNight ? '#050510' : '#94a3b8'} roughness={0.5} />
+              <meshStandardMaterial color="#94a3b8" roughness={0.5} />
             </mesh>
             <mesh castShadow position={[0.45, 0.05, 0.1]}>
               <boxGeometry args={[0.04, 0.45, 0.06]} />
@@ -873,7 +871,7 @@ export default function Workroom({
             </mesh>
             <mesh castShadow position={[0.45, 0.28, 0.1]}>
               <boxGeometry args={[0.1, 0.04, 0.4]} />
-              <meshStandardMaterial color={isNight ? '#050510' : '#94a3b8'} roughness={0.5} />
+              <meshStandardMaterial color="#94a3b8" roughness={0.5} />
             </mesh>
           </group>
         </group>
